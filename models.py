@@ -35,16 +35,16 @@ class PCA_model(object):
     epochs = 5
     
     
-
-    
     """
-    init assumes that input is already flattened
+    init sets up the model itself
     """
     def __init__(self, input_size, output_size, component_count):
         
         self.input_size = input_size
         self.output_size = output_size
         self.component_count = component_count
+        
+        self.truncate_matrix = None
         
         #create network layer by layer
         self.input = Input(component_count)
@@ -62,15 +62,52 @@ class PCA_model(object):
         self.output.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         
         
-    def PCA_truncate(self, data, component_count):
-        #todo : pca truncation 
-        pass 
     
-    def fit(self, x, y):
 
+    def PCA_truncate(self, data):
+        
+        """
+        Computes and stores the W matrix during the training process
+        """
+        
+        flat_data = data[:]
+        
+        #flatten the data if necessary 
+        if (data.shape >= 3):
+            flat_data = flat_data.reshape(flat_data.shape[0], np.prod(flat_data.shape[1:]))
+            
+            
+        #get pca coefficients
+        u, sigma, w_transpose = np.linalg.svd(flat_data, full_matrices=False)
+        
+        #remember our w
+        self.truncate_matrix = w_transpose
+        
+        #truncate data
+        trunc_data = np.matmul(flat_data, w_transpose.T[:, :self.component_count])
+        return trunc_data
+        
+            
+        
+
+    def fit(self, x, y):
+        """
+        Truncates all of the inputs
+        Trains all 
+        """
+            
         early_stopping = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0, patience=2, mode='auto')
         truncated_data = self.PCA_truncate(x)
         
         self.out.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
                    shuffle=True, callbacks=[early_stopping])
+        
+    def predict(self, x):
+        
+        if self.truncate_matrix == None:
+            raise Exception("Model hasn't been trained yet")
+            
+        pca_x = np.matmul(x, self.truncate_matrix.T[:, :self.component_count])
+        
+        return self.output.predict(pca_x)
         
