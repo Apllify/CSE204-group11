@@ -5,9 +5,9 @@ import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D
 
-class Net(Model):
+class CNN_model(Model):
     def __init__(self):
-        super(Net, self).__init__()
+        super(CNN_model, self).__init__()
         self.conv1 = Conv2D(64, 8, strides=(2, 2), activation="relu", padding="same")
         self.conv2 = Conv2D(128, 6, strides=(2, 2), activation="relu", padding="valid")
         self.conv3 = Conv2D(128, 5, strides=(1, 1), activation="relu", padding="valid")
