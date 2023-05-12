@@ -99,3 +99,10 @@ def perlin_noise(img, max_noise):
     noise = perlin_numpy.generate_perlin_noise_2d((28, 28), (2, 2)) * (max_noise * 2)
     
     return img + noise
+
+
+"""
+Invert colors of input image
+"""
+def flip_image(image):
+    return 1 - image
