@@ -14,5 +14,8 @@ def one_hot_encode(y):
     return res
 
 cnn_model = CNN_model()
-cnn_model.compile_SGD()
-cnn_model.fit(x_train.reshape(-1, 28, 28, 1), one_hot_encode(y_train))
+# cnn_model.fit(x_train.reshape(-1, 28, 28, 1), one_hot_encode(y_train))
+# cnn_model.save_weights('cnn_weights')
+cnn_model.load_weights('cnn_weights')
+# loss, acc = cnn_model.evaluate(x_test.reshape(-1, 28, 28, 1), one_hot_encode(y_test))
+# print(loss, acc)

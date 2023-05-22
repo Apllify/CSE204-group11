@@ -17,6 +17,7 @@ class CNN_model(Model):
         self.flatten = Flatten()
         self.dense1 = Dense(128, activation="relu")
         self.dense2 = Dense(10, activation="softmax")
+        self.compile_SGD()
 
     def call(self, x):
         x = self.conv1(x)
