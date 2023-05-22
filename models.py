@@ -10,13 +10,13 @@ from tensorflow.keras.optimizers import SGD
 class CNN_model(Model):
     def __init__(self):
         super(CNN_model, self).__init__()
-        self.conv1 = Conv2D(64, 8, strides=(2, 2), activation="relu", padding="same")
-        self.conv2 = Conv2D(128, 6, strides=(2, 2), activation="relu", padding="valid")
-        self.conv3 = Conv2D(128, 5, strides=(1, 1), activation="relu", padding="valid")
+        self.conv1 = Conv2D(64, (3, 3), strides=(2, 2), activation="relu", padding="same")
+        self.conv2 = Conv2D(128, (2, 2), strides=(1, 1), activation="relu", padding="valid")
+        self.conv3 = Conv2D(128, (3, 3), strides=(1, 1), activation="relu", padding="valid")
         self.dropout = Dropout(0.25)
         self.flatten = Flatten()
         self.dense1 = Dense(128, activation="relu")
-        self.dense2 = Dense(10)
+        self.dense2 = Dense(10, activation="softmax")
 
     def call(self, x):
         x = self.conv1(x)
@@ -26,6 +26,11 @@ class CNN_model(Model):
         x = self.flatten(x)
         x = self.dense1(x)
         return self.dense2(x)
+    
+    def compile_SGD(self):
+        self.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
+    
+    
     
     
 class PCA_model(object):
