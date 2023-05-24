@@ -3,8 +3,12 @@ import tensorflow as tf
 
 from tensorflow import keras
 from tensorflow.keras import Model
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, Input
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, Input, BatchNormalization
 from tensorflow.keras.optimizers import SGD
+
+import tensorflow.keras.datasets.mnist as mnist
+import matplotlib.pyplot as plt
+
 
 
 class CNN_model(Model):
@@ -41,34 +45,59 @@ class PCA_model(object):
     epochs = 5
     
     
-    """
-    init sets up the model itself
-    """
-    def __init__(self, input_size, output_size, component_count):
+
+    def __init__(self, component_count, output_size):
         
-        self.input_size = input_size
+        """
+        init sets up the model itself
+        """
+        
+        #instance attributes
         self.output_size = output_size
         self.component_count = component_count
         
         self.truncate_matrix = None
+        self.is_trained = False
         
         #create network layer by layer
         self.input = Input(component_count)
         
         self.dense1 = Dense(2048, activation="relu")(self.input)
+        self.dense1 = BatchNormalization()(self.dense1)
+        
         self.dense2 = Dense(1024, activation="relu")(self.dense1)
+        self.dense2 = BatchNormalization()(self.dense2)
+
         self.dense3 = Dense(512, activation="relu")(self.dense2)
+        self.dense3 = BatchNormalization()(self.dense3)
+
         self.dense4 = Dense(256, activation="relu")(self.dense3)
+        self.dense4 = BatchNormalization()(self.dense4)
+
         
-        self.output= Dense(output_size, activation="linear")(self.dense4)
+        self.output= Dense(output_size, activation="softmax")(self.dense4)
         
+        
+        #define model + compile
+        self.model = Model(self.input, self.output, name="PCApredictor")
         
         #compile network 
         sgd = SGD(learning_rate=0.1)
-        self.output.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+        self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         
         
-    
+    def flatten_each_element(array):
+        """
+        Makes is so that every element of main array is a 1d array
+        """
+        
+        if (len(array.shape) <= 2):
+            return array
+        
+        flat_array = array[:]
+        flat_array = flat_array.reshape(flat_array.shape[0], np.prod(flat_array.shape[1:]))
+        
+        return flat_array
 
     def PCA_truncate(self, data):
         
@@ -76,12 +105,9 @@ class PCA_model(object):
         Computes and stores the W matrix during the training process
         """
         
-        flat_data = data[:]
-        
-        #flatten the data if necessary 
-        if (data.shape >= 3):
-            flat_data = flat_data.reshape(flat_data.shape[0], np.prod(flat_data.shape[1:]))
-            
+        #flatten input data
+        flat_data = PCA_model.flatten_each_element(data)        
+
             
         #get pca coefficients
         u, sigma, w_transpose = np.linalg.svd(flat_data, full_matrices=False)
@@ -99,21 +125,37 @@ class PCA_model(object):
     def fit(self, x, y):
         """
         Truncates all of the inputs
-        Trains all 
+        Trains on that new version of them to reduce density of the input layer 
         """
             
-        early_stopping = keras.callbacks.EarlyStopping(monitor='val_accuracy', min_delta=0, patience=2, mode='auto')
         truncated_data = self.PCA_truncate(x)
         
-        self.out.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
-                   shuffle=True, callbacks=[early_stopping])
+        self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
+                   shuffle=True)
+        
+        self.is_trained = True
+      
         
     def predict(self, x):
+        """
+        Returns model predictions
+        x has to be a LIST of inputs and not a singular input
+        """
+            
         
-        if self.truncate_matrix == None:
+        if (not self.is_trained)  :
             raise Exception("Model hasn't been trained yet")
             
-        pca_x = np.matmul(x, self.truncate_matrix.T[:, :self.component_count])
+        if (len(x.shape) <= 1):
+            raise Exception("Input list of elements is invalid (dimension should be >= 2)")
+            
+        #hacky code, rework eventually
+        flat_x = PCA_model.flatten_each_element(x)
+        pca_x = np.matmul(flat_x, self.truncate_matrix.T[:, :self.component_count])
         
-        return self.output.predict(pca_x)
+        return self.model.predict(pca_x)
+    
+    
+    def save(self, filename):
+        self.model.save(filename)
         
