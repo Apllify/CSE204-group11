@@ -25,9 +25,9 @@ def one_hot_encode(y):
 # y_train_cat = utils.to_categorical(y_train, 10)
 
 
-
+#so clean :0
 pca_model = PCA_model.load("pca_weights") #250 component pca 
-dnn_model = PCA_model.load_model(models.load_models('dnn_weights'), 28*28, 10, x_train) #this probably needs to be changed
+dnn_model = PCA_model.load("dnn_weights")
 
 
 
