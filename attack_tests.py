@@ -19,7 +19,6 @@ def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca
     for i, val in np.ndenumerate(sample_list):
         print("AAAAAAAAAAAAAAAAAAAA")
         print(attack_func(database_x, 0, val))
-        dnn_model.evaluate()
         cnn_acc[i] = cnn_model.evaluate( (attack_func(database_x, 0, val)), database_y)
         pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)
         dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)

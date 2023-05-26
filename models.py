@@ -43,6 +43,9 @@ class CNN_model(Model):
     def compile_SGD(self):
         self.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
         
+    def evaluate(self, x, y):
+        return super().evaluate(x.reshape(-1, 28, 28, 1), y)
+        
 
 
 
