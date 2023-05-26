@@ -28,7 +28,7 @@ def one_hot_encode(y):
 
 #so clean :0
 pca_model = PCA_model.load("pca_weights") #250 component pca 
-dnn_model = PCA_model.load("dnn_weights")
+#dnn_model = PCA_model.load_model(models.load_models('dnn_weights'), 28*28, 10, x_train) #this probably needs to be changed
 
 
 
@@ -40,7 +40,7 @@ cnn_model.load_weights('cnn_weights')
 # print(loss, acc)
 
 
-
+#comment for testing
 
 
 #ROTATION TESTS
@@ -53,7 +53,7 @@ dnn_acc = np.zeros(360)
 for a in enumerate(angles):
     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-    dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+    #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
 
 
 
@@ -67,4 +67,4 @@ dnn_acc = np.zeros(360)
 for a in enumerate(angles):
     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-    dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+    #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
