@@ -10,13 +10,15 @@ import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
 
-
 class CNN_model(Model):
     def __init__(self):
         super(CNN_model, self).__init__()
-        self.conv1 = Conv2D(64, (3, 3), strides=(2, 2), activation="relu", padding="same")
-        self.conv2 = Conv2D(128, (2, 2), strides=(1, 1), activation="relu", padding="valid")
-        self.conv3 = Conv2D(128, (3, 3), strides=(1, 1), activation="relu", padding="valid")
+        self.conv1 = Conv2D(64, (3, 3), strides=(
+            2, 2), activation="relu", padding="same")
+        self.conv2 = Conv2D(128, (2, 2), strides=(
+            1, 1), activation="relu", padding="valid")
+        self.conv3 = Conv2D(128, (3, 3), strides=(
+            1, 1), activation="relu", padding="valid")
         self.dropout = Dropout(0.25)
         self.flatten = Flatten()
         self.dense1 = Dense(128, activation="relu")
@@ -31,33 +33,40 @@ class CNN_model(Model):
         x = self.flatten(x)
         x = self.dense1(x)
         return self.dense2(x)
-    
+
     def compile_SGD(self):
-        self.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
-    
-    
-    
-    
+        self.compile(optimizer=SGD(),
+                     loss='categorical_crossentropy', metrics=['accuracy'])
+
+
 class PCA_model(object):
-    
-    #constants
+
+    # constants
     batch_size = 32
     epochs = 5
-    
-    
 
+
+<<<<<<< HEAD
     def __init__(self, component_count, output_size, generate_network=True, perform_PCM=True):
         
+=======
+    def __init__(self, component_count, output_size, generate_network=True):
+>>>>>>> 0f3e8e1c123c4c06ba0a54e4acf1d1b49b94d7a1
         """
         init sets up the model itself
         """
-        
-        #instance attributes
+
+        # instance attributes
         self.output_size = output_size
         self.component_count = component_count
+<<<<<<< HEAD
         self.perform_PCM = perform_PCM
             
         
+=======
+
+        self.truncate_matrix = None
+>>>>>>> 0f3e8e1c123c4c06ba0a54e4acf1d1b49b94d7a1
         self.is_trained = False
         
         if (generate_network):
@@ -69,13 +78,11 @@ class PCA_model(object):
             
             self.dense2 = Dense(1024, activation="relu")(self.dense1)
             self.dense2 = BatchNormalization()(self.dense2)
-
             self.dense3 = Dense(512, activation="relu")(self.dense2)
             self.dense3 = BatchNormalization()(self.dense3)
 
             self.dense4 = Dense(256, activation="relu")(self.dense3)
             self.dense4 = BatchNormalization()(self.dense4)
-
             
             self.output= Dense(output_size, activation="softmax")(self.dense4)
         
@@ -91,33 +98,33 @@ class PCA_model(object):
         """
         Makes is so that every element of main array is a 1d array
         """
-        
+
         if (len(array.shape) <= 2):
             return array
-        
+
         flat_array = array[:]
-        flat_array = flat_array.reshape(flat_array.shape[0], np.prod(flat_array.shape[1:]))
-        
+        flat_array = flat_array.reshape(
+            flat_array.shape[0], np.prod(flat_array.shape[1:]))
+
         return flat_array
 
     def PCA_truncate(self, data):
-        
         """
         Computes and stores the W matrix during the training process
         """
-        
-        #flatten input data
-        flat_data = PCA_model.flatten_each_element(data)        
 
-            
-        #get pca coefficients
+        # flatten input data
+        flat_data = PCA_model.flatten_each_element(data)
+
+        # get pca coefficients
         u, sigma, w_transpose = np.linalg.svd(flat_data, full_matrices=False)
-        
-        #remember our w
+
+        # remember our w
         self.truncate_matrix = w_transpose
-        
-        #truncate data
-        trunc_data = np.matmul(flat_data, w_transpose.T[:, :self.component_count])
+
+        # truncate data
+        trunc_data = np.matmul(
+            flat_data, w_transpose.T[:, :self.component_count])
         return trunc_data
         
             
@@ -158,15 +165,15 @@ class PCA_model(object):
         Returns model predictions
         x has to be a LIST of inputs and not a singular input
         """
-            
-        
-        if (not self.is_trained)  :
+
+        if (not self.is_trained):
             raise Exception("Model hasn't been trained yet")
-            
+
         if (len(x.shape) <= 1):
-            raise Exception("Input list of elements is invalid (dimension should be >= 2)")
-            
-        #hacky code, rework eventually
+            raise Exception(
+                "Input list of elements is invalid (dimension should be >= 2)")
+
+        # hacky code, rework eventually
         flat_x = PCA_model.flatten_each_element(x)
 
         if (self.perform_PCM):
