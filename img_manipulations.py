@@ -102,6 +102,4 @@ def flip_image(image):
     """
     return 1 - image
 
-
-
 #def rotate_database(image, )

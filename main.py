@@ -37,3 +37,14 @@ cnn_model.load_weights('cnn_weights')
 
 
 
+
+#Rotation tests
+angles = np.arange(0, 360)
+
+cnn_acc = np.zeros(360)
+pca_acc = np.zeros(360)
+dnn_acc = np.zeros(360)
+
+for a in enumerate(angles):
+    cnn_acc[a] = 
+
