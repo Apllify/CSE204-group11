@@ -6,10 +6,13 @@ import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
+from tests import *
+
 
 MAX_BLUR = 2
 #load dataset + normalize
 (x_train, y_train), (x_test, y_test) = mnist.load_data()  
+x_train, y_train, x_test, y_test = prep_rotations(x_train, y_train, x_test, y_test)
 x_train = x_train / 255  
 x_test = x_test / 255
 
