@@ -2,15 +2,17 @@ import numpy as np
 
 import img_manipulations
 
-def attack_tests(sample_list, attack_func, database_x, database_y, cnn_model, pca_model, dnn_model):
+def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca_model, dnn_model):
     '''
     Run attack and return accuracy as attack varies 
     '''
+    print('Sti cazzi')
     cnn_acc = np.zeros(len(sample_list))
     pca_acc = np.zeros(len(sample_list))
     dnn_acc = np.zeros(len(sample_list))
+    print('col cazzo')
 
-    for i, val in enumerate(sample_list):
+    for i, val in np.ndenumerate(sample_list):
         cnn_acc[i] = cnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
         pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
         dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]  
@@ -34,6 +36,7 @@ def generate_spoofed_dataset(dataset):
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
 
     for image in dataset:
+        pass
 
 # Visualizing blur 
 
