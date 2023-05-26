@@ -45,7 +45,8 @@ class PCA_model(object):
     batch_size = 32
     epochs = 5
 
-    def __init__(self, component_count, output_size):
+
+    def __init__(self, component_count, output_size, generate_network=True):
         """
         init sets up the model itself
         """
@@ -56,32 +57,32 @@ class PCA_model(object):
 
         self.truncate_matrix = None
         self.is_trained = False
+        
+        if (generate_network):
+            #create network layer by layer
+            self.input = Input(component_count)
+            
+            self.dense1 = Dense(2048, activation="relu")(self.input)
+            self.dense1 = BatchNormalization()(self.dense1)
+            
+            self.dense2 = Dense(1024, activation="relu")(self.dense1)
+            self.dense2 = BatchNormalization()(self.dense2)
+            self.dense3 = Dense(512, activation="relu")(self.dense2)
+            self.dense3 = BatchNormalization()(self.dense3)
 
-        # create network layer by layer
-        self.input = Input(component_count)
-
-        self.dense1 = Dense(2048, activation="relu")(self.input)
-        self.dense1 = BatchNormalization()(self.dense1)
-
-        self.dense2 = Dense(1024, activation="relu")(self.dense1)
-        self.dense2 = BatchNormalization()(self.dense2)
-
-        self.dense3 = Dense(512, activation="relu")(self.dense2)
-        self.dense3 = BatchNormalization()(self.dense3)
-
-        self.dense4 = Dense(256, activation="relu")(self.dense3)
-        self.dense4 = BatchNormalization()(self.dense4)
-
-        self.output = Dense(output_size, activation="softmax")(self.dense4)
-
-        # define model + compile
-        self.model = Model(self.input, self.output, name="PCApredictor")
-
-        # compile network
-        sgd = SGD(learning_rate=0.1)
-        self.model.compile(loss='categorical_crossentropy',
-                           optimizer=sgd, metrics=['accuracy'])
-
+            self.dense4 = Dense(256, activation="relu")(self.dense3)
+            self.dense4 = BatchNormalization()(self.dense4)
+            
+            self.output= Dense(output_size, activation="softmax")(self.dense4)
+        
+            #define model + compile
+            self.model = Model(self.input, self.output, name="PCApredictor")
+            
+            #compile network 
+            sgd = SGD(learning_rate=0.1)
+            self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+        
+        
     def flatten_each_element(array):
         """
         Makes is so that every element of main array is a 1d array
@@ -114,20 +115,36 @@ class PCA_model(object):
         trunc_data = np.matmul(
             flat_data, w_transpose.T[:, :self.component_count])
         return trunc_data
+        
+            
+    
+    def load_model(loaded_model, component_count, output_size, data_set):
+        """
+        Loads model from preexisting weights 
+        """
+        pca = PCA_model(component_count, output_size, False)
+        pca.model = loaded_model
+        pca.PCA_truncate(data_set)
+
+        return pca
+
+        
 
     def fit(self, x, y):
         """
         Truncates all of the inputs
         Trains on that new version of them to reduce density of the input layer 
         """
-
-        truncated_data = self.PCA_truncate(x)
-
-        self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs,
-                       shuffle=True)
-
-        self.is_trained = True
-
+            
+        if (not self.is_trained):
+            truncated_data = self.PCA_truncate(x)
+            
+            self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
+                    shuffle=True)
+            
+            self.is_trained = True
+      
+        
     def predict(self, x):
         """
         Returns model predictions
