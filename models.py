@@ -10,13 +10,15 @@ import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
 
-
 class CNN_model(Model):
     def __init__(self):
         super(CNN_model, self).__init__()
-        self.conv1 = Conv2D(64, (3, 3), strides=(2, 2), activation="relu", padding="same")
-        self.conv2 = Conv2D(128, (2, 2), strides=(1, 1), activation="relu", padding="valid")
-        self.conv3 = Conv2D(128, (3, 3), strides=(1, 1), activation="relu", padding="valid")
+        self.conv1 = Conv2D(64, (3, 3), strides=(
+            2, 2), activation="relu", padding="same")
+        self.conv2 = Conv2D(128, (2, 2), strides=(
+            1, 1), activation="relu", padding="valid")
+        self.conv3 = Conv2D(128, (3, 3), strides=(
+            1, 1), activation="relu", padding="valid")
         self.dropout = Dropout(0.25)
         self.flatten = Flatten()
         self.dense1 = Dense(128, activation="relu")
@@ -31,40 +33,36 @@ class CNN_model(Model):
         x = self.flatten(x)
         x = self.dense1(x)
         return self.dense2(x)
-    
+
     def compile_SGD(self):
-        self.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
-    
-    
-    
-    
+        self.compile(optimizer=SGD(),
+                     loss='categorical_crossentropy', metrics=['accuracy'])
+
+
 class PCA_model(object):
-    
-    #constants
+
+    # constants
     batch_size = 32
     epochs = 5
-    
-    
 
     def __init__(self, component_count, output_size):
-        
         """
         init sets up the model itself
         """
-        
-        #instance attributes
+
+        # instance attributes
         self.output_size = output_size
         self.component_count = component_count
-        
+
         self.truncate_matrix = None
         self.is_trained = False
-        
-        #create network layer by layer
+
+        # create network layer by layer
         self.input = Input(component_count)
-        
+
         self.dense1 = Dense(2048, activation="relu")(self.input)
         self.dense1 = BatchNormalization()(self.dense1)
-        
+
         self.dense2 = Dense(1024, activation="relu")(self.dense1)
         self.dense2 = BatchNormalization()(self.dense2)
 
@@ -74,88 +72,81 @@ class PCA_model(object):
         self.dense4 = Dense(256, activation="relu")(self.dense3)
         self.dense4 = BatchNormalization()(self.dense4)
 
-        
-        self.output= Dense(output_size, activation="softmax")(self.dense4)
-        
-        
-        #define model + compile
+        self.output = Dense(output_size, activation="softmax")(self.dense4)
+
+        # define model + compile
         self.model = Model(self.input, self.output, name="PCApredictor")
-        
-        #compile network 
+
+        # compile network
         sgd = SGD(learning_rate=0.1)
-        self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-        
-        
+        self.model.compile(loss='categorical_crossentropy',
+                           optimizer=sgd, metrics=['accuracy'])
+
     def flatten_each_element(array):
         """
         Makes is so that every element of main array is a 1d array
         """
-        
+
         if (len(array.shape) <= 2):
             return array
-        
+
         flat_array = array[:]
-        flat_array = flat_array.reshape(flat_array.shape[0], np.prod(flat_array.shape[1:]))
-        
+        flat_array = flat_array.reshape(
+            flat_array.shape[0], np.prod(flat_array.shape[1:]))
+
         return flat_array
 
     def PCA_truncate(self, data):
-        
         """
         Computes and stores the W matrix during the training process
         """
-        
-        #flatten input data
-        flat_data = PCA_model.flatten_each_element(data)        
 
-            
-        #get pca coefficients
+        # flatten input data
+        flat_data = PCA_model.flatten_each_element(data)
+
+        # get pca coefficients
         u, sigma, w_transpose = np.linalg.svd(flat_data, full_matrices=False)
-        
-        #remember our w
+
+        # remember our w
         self.truncate_matrix = w_transpose
-        
-        #truncate data
-        trunc_data = np.matmul(flat_data, w_transpose.T[:, :self.component_count])
+
+        # truncate data
+        trunc_data = np.matmul(
+            flat_data, w_transpose.T[:, :self.component_count])
         return trunc_data
-        
-            
-        
 
     def fit(self, x, y):
         """
         Truncates all of the inputs
         Trains on that new version of them to reduce density of the input layer 
         """
-            
+
         truncated_data = self.PCA_truncate(x)
-        
-        self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
-                   shuffle=True)
-        
+
+        self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs,
+                       shuffle=True)
+
         self.is_trained = True
-      
-        
+
     def predict(self, x):
         """
         Returns model predictions
         x has to be a LIST of inputs and not a singular input
         """
-            
-        
-        if (not self.is_trained)  :
+
+        if (not self.is_trained):
             raise Exception("Model hasn't been trained yet")
-            
+
         if (len(x.shape) <= 1):
-            raise Exception("Input list of elements is invalid (dimension should be >= 2)")
-            
-        #hacky code, rework eventually
+            raise Exception(
+                "Input list of elements is invalid (dimension should be >= 2)")
+
+        # hacky code, rework eventually
         flat_x = PCA_model.flatten_each_element(x)
-        pca_x = np.matmul(flat_x, self.truncate_matrix.T[:, :self.component_count])
-        
+        pca_x = np.matmul(
+            flat_x, self.truncate_matrix.T[:, :self.component_count])
+
         return self.model.predict(pca_x)
-    
-    
+
     def save(self, filename):
         self.model.save(filename)
-        
