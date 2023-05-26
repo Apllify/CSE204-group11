@@ -1,6 +1,6 @@
 import numpy as np
 from models import CNN_model, PCA_model
-import img_manipulations
+from img_manipulations import rotate_image, gaussian_blur, box_blur, perlin_noise, uniform_noise
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
