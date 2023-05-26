@@ -101,3 +101,7 @@ def flip_image(image):
     Invert colors of input image
     """
     return 1 - image
+
+
+
+#def rotate_database(image, )

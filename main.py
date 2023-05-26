@@ -25,8 +25,7 @@ def one_hot_encode(y):
 
 
 # pca_model.save('pca_weights')
-pca_model = models.load_model('pca_weights')
-
+pca_model_network = PCA_model.load_model(models.load_model('pca_weights'), 50, 10, x_train)
 
 
 
