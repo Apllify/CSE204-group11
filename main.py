@@ -6,10 +6,13 @@ import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
+from tests import *
+
 
 MAX_BLUR = 2
 #load dataset + normalize
 (x_train, y_train), (x_test, y_test) = mnist.load_data()  
+x_train, y_train, x_test, y_test = prep_rotations(x_train, y_train, x_test, y_test)
 x_train = x_train / 255  
 x_test = x_test / 255
 
@@ -40,35 +43,6 @@ cnn_model.load_weights('cnn_weights')
 # # print(loss, acc)
 
 
-# #comment for testing
-
-
-# #ROTATION TESTS
-# angles = np.arange(0, 360)
-
-# cnn_acc = np.zeros(360)
-# pca_acc = np.zeros(360)
-# dnn_acc = np.zeros(360)
-
-# for a in enumerate(angles):
-#     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-
-
-
-# #BLUR TESTS
-# blurs = np.arange(0, 360)
-
-# cnn_acc = np.zeros(360)
-# pca_acc = np.zeros(360)
-# dnn_acc = np.zeros(360)
-
-# for a in enumerate(angles):
-#     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-
 
 #pca_model = PCA_model(50, 10)
 #pca_model.fit(x_train[:100], y_train_cat[:100])
@@ -76,3 +50,20 @@ cnn_model.load_weights('cnn_weights')
 
 
 pca_model = PCA_model.load("minimodel")
+
+# #ROTATION TESTS
+angles = np.arange(0, 360)
+cnn_acc, pca_acc, dnn_acc = run_tests(angles, rotate_database, cnn_model, pca_model, dnn_model)
+
+# #GAUSSIAN BLUR TESTS
+blurs = np.arange(0, 2, 0.1)
+cnn_acc, pca_acc, dnn_acc = run_tests(blurs, gaussian_blur_database, cnn_model, pca_model, dnn_model)
+
+# cnn_acc = np.zeros(len(blurs))
+# pca_acc = np.zeros(len(blurs))
+# dnn_acc = np.zeros(len(blurs))
+
+# for b in enumerate(blurs):
+#     cnn_acc[a] = cnn_model.evaluate(gaussian_blur_database(x_test, 0, b))[1]
+#     pca_acc[a] = pca_model.evaluate(gaussian_blur_database(x_test, 0, b))[1]
+#     #dnn_acc[a] = dnn_model.evaluate(gaussian_blur_database(x_test, 0, b))[1]
