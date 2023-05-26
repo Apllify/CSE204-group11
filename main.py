@@ -1,6 +1,6 @@
 import numpy as np
 from models import CNN_model, PCA_model
-import img_manipulations
+from img_manipulations import rotate_image, gaussian_blur, box_blur, perlin_noise, uniform_noise
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
@@ -18,16 +18,13 @@ def one_hot_encode(y):
 
 
 
-
 # y_train_cat = utils.to_categorical(y_train, 10)
 # pca_model = PCA_model(50, 10)
 # pca_model.fit(x_train[:1000], y_train_cat[:1000])
 
 
 # pca_model.save('pca_weights')
-pca_model = models.load_model('pca_weights')
-
-
+pca_model_network = PCA_model.load_model(models.load_model('pca_weights'), 50, 10, x_train)
 
 
 cnn_model = CNN_model()
@@ -36,3 +33,7 @@ cnn_model.load_weights('cnn_weights')
 # cnn_model.save_weights('cnn_weights')
 # loss, acc = cnn_model.evaluate(x_test.reshape(-1, 28, 28, 1), one_hot_encode(y_test))
 # print(loss, acc)
+
+
+
+
