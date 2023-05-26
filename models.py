@@ -46,7 +46,7 @@ class PCA_model(object):
     
     
 
-    def __init__(self, component_count, output_size, generate_network=True):
+    def __init__(self, component_count, output_size, generate_network=True, perform_PCM=True):
         
         """
         init sets up the model itself
@@ -55,8 +55,9 @@ class PCA_model(object):
         #instance attributes
         self.output_size = output_size
         self.component_count = component_count
+        self.perform_PCM = perform_PCM
+            
         
-        self.truncate_matrix = None
         self.is_trained = False
         
         if (generate_network):
@@ -139,8 +140,12 @@ class PCA_model(object):
         Trains on that new version of them to reduce density of the input layer 
         """
             
+        
         if (not self.is_trained):
-            truncated_data = self.PCA_truncate(x)
+            if (self.perform_PCM):
+                truncated_data = self.PCA_truncate(x)
+            else:
+                truncated_data = PCA_model.flatten_each_element(x)
             
             self.model.fit(truncated_data, y, batch_size=PCA_model.batch_size, epochs=PCA_model.epochs, 
                     shuffle=True)
@@ -163,9 +168,13 @@ class PCA_model(object):
             
         #hacky code, rework eventually
         flat_x = PCA_model.flatten_each_element(x)
-        pca_x = np.matmul(flat_x, self.truncate_matrix.T[:, :self.component_count])
+
+        if (self.perform_PCM):
+            pca_x = np.matmul(flat_x, self.truncate_matrix.T[:, :self.component_count])
+            return self.model.predict(pca_x)
+        else:
+            return self.model.predict(flat_x)
         
-        return self.model.predict(pca_x)
     
     
     def save(self, filename):
