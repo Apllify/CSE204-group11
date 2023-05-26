@@ -9,7 +9,7 @@ from tensorflow.keras.optimizers import SGD
 import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
-
+# model from cleverhans 
 class CNN_model(Model):
     def __init__(self):
         super(CNN_model, self).__init__()
@@ -37,6 +37,9 @@ class CNN_model(Model):
     def compile_SGD(self):
         self.compile(optimizer=SGD(),
                      loss='categorical_crossentropy', metrics=['accuracy'])
+    
+    def predict(self, x):
+        return super().predict(x.reshape(-1, 28, 28, 1))
 
 
 class PCA_model(object):
