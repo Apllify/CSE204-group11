@@ -33,7 +33,3 @@ cnn_model.load_weights('cnn_weights')
 # cnn_model.save_weights('cnn_weights')
 # loss, acc = cnn_model.evaluate(x_test.reshape(-1, 28, 28, 1), one_hot_encode(y_test))
 # print(loss, acc)
-
-
-
-
