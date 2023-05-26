@@ -122,22 +122,6 @@ def rotate_database(images, min_rot, max_rot):
     return new_images
 
 
-def gaussian_blur_database(images, min_blur, max_blur):
-    """
-    Returns a new database that maches the rotation requirements
-
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
-    """
-
-    new_images = np.array([])
-
-    for image in images:
-        blur = random.randint(min_blur, max_blur)
-        np.append(new_images, gaussian_blur(image, blur))
-
-    return new_images
-
-
 def prep_rotations(x_train, y_train, x_test, y_test):
     new_x_train = []
     new_y_train = []
