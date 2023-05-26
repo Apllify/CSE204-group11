@@ -2,6 +2,9 @@ import numpy as np
 
 import img_manipulations
 import random
+import warnings
+
+warnings.filterwarnings('ignore')
 
 def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca_model, dnn_model):
     '''
@@ -14,7 +17,8 @@ def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca
     print('col cazzo')
 
     for i, val in np.ndenumerate(sample_list):
-        cnn_acc[i] = cnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
+        
+        cnn_acc[i] = cnn_model.evaluate(attack_func(database_x, 0, val).reshape(-1, 28, 28, 1), database_y)[1]
         pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
         dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]  
 

@@ -12,6 +12,10 @@ import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
 import cleverhans
+import warnings
+
+warnings.filterwarnings('ignore')
+
 
 
 
@@ -38,9 +42,7 @@ class CNN_model(Model):
     
     def compile_SGD(self):
         self.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
-    
-    def evaluate(x, y):
-        super().evaluate(x.reshape(-1, 28, 28, 1), y)
+        
 
 
 

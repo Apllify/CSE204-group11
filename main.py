@@ -8,8 +8,11 @@ import matplotlib.pyplot  as plt
 from attack_tests import *
 
 
+
+
 from models import CNN_model, PCA_model
 import attack_tests
+
 
 MAX_BLUR = 2
 
@@ -27,6 +30,14 @@ def one_hot_encode(y):
     res[np.arange(y.size), y] = 1
     return res
 
+# fig = plt.figure(figsize=(1, 5))
+
+# x_new = rotate_database(x_test, 89, 90)
+
+# for j in range(5):
+#     fig.add_subplot(j)
+#     plt.imshow(x_train[j])
+# plt.show()
 
 """ PCA Model Training Code
 pca_model = PCA_model(250, 10)
