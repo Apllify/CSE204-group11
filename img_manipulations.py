@@ -118,12 +118,10 @@ def rotate_database(images, min_rot, max_rot):
     new_images = np.zeros_like(images)
 
 
-    for i in range(len(images)):
+    for i in range(images.shape[0]):
         rot = random.randint(min_rot, max_rot)
-        new_images[i] = rotate_image(images[i], rot)
-        
-    print(new_images.shape)
-    
+        np.append(new_images, rotate_image(images[i], rot))
+
     return new_images
 
 def gaussian_blur_database(images, min_blur, max_blur):
