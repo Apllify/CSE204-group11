@@ -1,21 +1,23 @@
 import img_manipulations
+import random
 
 
 def generate_spoofed_dataset(dataset):
     spoofed_dataset = np.array([])
 
     #distributions of filters (relative values)
-    rotation_odd = 0
-    gaussian_blur_odd = 0
-    box_blur_odd = 0
-    uniform_noise_odd = 0
-    perlin_noise_odd = 0
-    flip_image_odd = 0
+    rotation_odd = 1
+    gaussian_blur_odd = 1
+    box_blur_odd = 1
+    uniform_noise_odd = 1
+    perlin_noise_odd = 1
+    flip_image_odd = 1
 
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
 
     for image in dataset:
+        rand = random.random() * total
 
 
 
