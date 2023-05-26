@@ -122,7 +122,7 @@ def rotate_database(images, min_rot, max_rot):
     return new_images
 
 
-def prep_rotaions(x_train, y_train, x_test, y_test):
+def prep_rotations(x_train, y_train, x_test, y_test):
     new_x_train = []
     new_y_train = []
     new_x_test = []
