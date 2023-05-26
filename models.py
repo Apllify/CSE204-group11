@@ -177,6 +177,23 @@ class PCA_model(object):
             return self.model.predict(flat_x)
         
     
+    def evaluate(self, x_test, y_test):
+        """
+        Returns a tuple of the form (test loss, test acc)
+        """
+
+        if (not self.is_trained):
+            raise Exception("Model hasn't been trained yet")
+
+
+        x_test_flat= PCA_model.flatten_each_element(x_test)
+
+        if (self.perform_PCM):
+            pca_x = np.matmul(x_test_flat, self.truncate_matrix.T[:, :self.component_count])
+            return self.model.evaluate(pca_x, y_test)
+        else:
+            return self.model.evaluate(x_test_flat, y_test)
+
     
     def save(self, filename):
         self.model.save(filename)
