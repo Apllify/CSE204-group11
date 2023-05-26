@@ -1,16 +1,21 @@
 import matplotlib as plt
 import numpy as np
 from models import CNN_model, PCA_model
-from img_manipulations import rotate_image, gaussian_blur, box_blur, perlin_noise, uniform_noise
+from img_manipulations import *
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
+import matplotlib as pt
 
 
 #load dataset + normalize
 (x_train, y_train), (x_test, y_test) = mnist.load_data()  
 x_train = x_train / 255  
 x_test = x_test / 255
+
+
+# for i in range(5):
+#     pt.imshow(gaussian_blur(x_train[i]))
 
 def one_hot_encode(y):
     res = np.zeros((y.size, 10))
@@ -25,7 +30,9 @@ def one_hot_encode(y):
 
 
 # pca_model.save('pca_weights')
-pca_model_network = PCA_model.load_model(models.load_model('pca_weights'), 50, 10, x_train)
+pca_model = PCA_model.load_model(models.load_model('pca_weights'), 50, 10, x_train)
+dnn_model = PCA_model.load_model(models.load_models('dnn_weights'), 28*28, 10, x_train) #this probably needs to be changed
+
 
 
 cnn_model = CNN_model()
@@ -39,3 +46,28 @@ cnn_model.load_weights('cnn_weights')
 
 
 
+#ROTATION TESTS
+angles = np.arange(0, 360)
+
+cnn_acc = np.zeros(360)
+pca_acc = np.zeros(360)
+dnn_acc = np.zeros(360)
+
+for a in enumerate(angles):
+    cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+    pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
+    dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+
+
+
+#BLUR TESTS
+blurs = np.arange(0, 360)
+
+cnn_acc = np.zeros(360)
+pca_acc = np.zeros(360)
+dnn_acc = np.zeros(360)
+
+for a in enumerate(angles):
+    cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+    pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
+    dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]

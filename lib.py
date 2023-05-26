@@ -1,5 +1,3 @@
-
-
 def prep_roations(x_train, y_train, x_test, y_test):
     new_x_train = []
     new_y_train = []
