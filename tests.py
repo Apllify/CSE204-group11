@@ -1,5 +1,7 @@
+import numpy as np
 
-def run_tests(sample_list, attack_func, cnn_model, pca_model, dnn_model):
+
+def attack_tests(sample_list, attack_func, database_x, database_y, cnn_model, pca_model, dnn_model):
     '''
     Run attack and return accuracy as attack varies 
     '''
@@ -8,9 +10,9 @@ def run_tests(sample_list, attack_func, cnn_model, pca_model, dnn_model):
     dnn_acc = np.zeros(len(sample_list))
 
     for i, val in enumerate(sample_list):
-        cnn_acc[i] = cnn_model.evaluate(attack_func(x_test, 0, val))[1]
-        pca_acc[i] = pca_model.evaluate(attack_func(x_test, 0, val))[1]
-        dnn_acc[i] = dnn_model.evaluate(attack_func(x_test, 0, val))[1]  
+        cnn_acc[i] = cnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
+        pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
+        dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]  
 
     return cnn_acc, pca_acc, dnn_acc
 
