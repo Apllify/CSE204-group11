@@ -50,10 +50,10 @@ def generate_spoofed_dataset(database_x, database_y):
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
 
-    for i, image in np.ndenumerate(dataset_x):
+    for i, image in np.ndenumerate(database_x):
         rand = random.random() * total
 
-        if dataset_y[i] not in (6, 9): #avoid rotating the numbers 6 and 9 
+        if database_y[i] not in (6, 9): #avoid rotating the numbers 6 and 9 
 
             if rand <= rotation_odd/total : 
                 np.append(spoofed_dataset, rotate_image(image, rotation_angle))
