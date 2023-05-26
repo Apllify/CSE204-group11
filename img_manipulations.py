@@ -105,7 +105,6 @@ def flip_image(image):
     return 1 - image
 
 
-
 def rotate_database(images, min_rot, max_rot):
     """
     Returns a new database that maches the rotation requirements
