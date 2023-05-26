@@ -36,6 +36,8 @@ from tensorflow.keras.models import Sequential
 import scipy
 import perlin_numpy
 
+import random
+
 
 def rotate_image(img, rot_angle):
     """
@@ -102,4 +104,19 @@ def flip_image(image):
     """
     return 1 - image
 
-#def rotate_database(image, )
+
+def rotate_database(images, min_rot, max_rot):
+    """
+    Returns a new database that maches the rotation requirements
+
+    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
+    """
+
+    new_images = np.array([])
+
+
+    for image in images:
+        rot = random.randint(min_rot, max_rot)
+        np.append(new_images, rotate_image(image, rot))
+
+    return new_images
