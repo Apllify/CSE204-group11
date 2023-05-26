@@ -5,17 +5,15 @@ from img_manipulations import *
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
-import matplotlib as pt
+import matplotlib.pyplot  as plt
 
-
+MAX_BLUR = 2
 #load dataset + normalize
 (x_train, y_train), (x_test, y_test) = mnist.load_data()  
 x_train = x_train / 255  
 x_test = x_test / 255
 
 
-# for i in range(5):
-#     pt.imshow(gaussian_blur(x_train[i]))
 
 def one_hot_encode(y):
     res = np.zeros((y.size, 10))
