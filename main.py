@@ -57,8 +57,8 @@ cnn_model.save_weights('cnn_weights')
 
 
 #so clean :0
-# pca_model = PCA_model.load("pca_weights") 
-# dnn_model = PCA_model.load("dnn_weights") 
+pca_model = PCA_model.load("pca_weights") 
+dnn_model = PCA_model.load("dnn_weights") 
 
 cnn_model = CNN_model()
 cnn_model.load_weights('cnn_weights')
@@ -73,14 +73,13 @@ cnn_model.load_weights('cnn_weights')
 # #ROTATION TESTS
 angles = np.arange(0, 360)
 
-# cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test_cat, cnn_model, pca_model, dnn_model)
-cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test_cat, cnn_model, 0, 0)
+cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test_cat, cnn_model, pca_model, dnn_model)
 plt.plot(angles, cnn_acc)
 plt.show()
 
 
 #GAUSSIAN BLUR TESTS
 blurs = np.arange(0, 2, 0.1)
-# cnn_acc, pca_acc, dnn_acc = run_attacks(blurs, gaussian_blur_database, x_test, y_test, cnn_model, pca_model, dnn_model)
-cnn_acc, pca_acc, dnn_acc = run_attacks(blurs, gaussian_blur_database, x_test, y_test, cnn_model, 0, 0)
+cnn_acc, pca_acc, dnn_acc = run_attacks(blurs, gaussian_blur_database, x_test, y_test, cnn_model, pca_model, dnn_model)
+
 
