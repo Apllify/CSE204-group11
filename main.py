@@ -1,21 +1,25 @@
 import matplotlib as plt
 import numpy as np
-from models import CNN_model, PCA_model
-from img_manipulations import *
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
-from tests import *
+
+
+
+
+from models import CNN_model, PCA_model
+from img_manipulations import *
+from attack_tests import *
 
 
 MAX_BLUR = 2
-#load dataset + normalize
+
+#Load the main MNIST Dataset 
 (x_train, y_train), (x_test, y_test) = mnist.load_data()  
 x_train, y_train, x_test, y_test = prep_rotations(x_train, y_train, x_test, y_test)
 x_train = x_train / 255  
 x_test = x_test / 255
-
 y_train_cat = utils.to_categorical(y_train, 10)
 y_test_cat = utils.to_categorical(y_test, 10)
 
@@ -25,6 +29,14 @@ def one_hot_encode(y):
     res[np.arange(y.size), y] = 1
     return res
 
+# fig = plt.figure(figsize=(1, 5))
+
+# x_new = rotate_database(x_test, 89, 90)
+
+# for j in range(5):
+#     fig.add_subplot(j)
+#     plt.imshow(x_train[j])
+# plt.show()
 
 """ PCA Model Training Code
 pca_model = PCA_model(250, 10)
@@ -46,55 +58,28 @@ cnn_model.save_weights('cnn_weights')
 
 #so clean :0
 pca_model = PCA_model.load("pca_weights") 
-dnn_model = PCA_model.load('dnn_weights') 
+dnn_model = PCA_model.load("dnn_weights") 
 
 cnn_model = CNN_model()
 cnn_model.load_weights('cnn_weights')
 
+# print(cnn_model.evaluate(x_test.reshape(-1, 28, 28, 1), one_hot_encode(y_test)))
 
+fig = plt.figure(figsize=(5, 5))
+
+x_new = rotate_database(x_test, 80, 90)
 
 
 
 # #ROTATION TESTS
-# angles = np.arange(0, 360)
+angles = np.arange(0, 360)
 
-# cnn_acc = np.zeros(360)
-# pca_acc = np.zeros(360)
-# dnn_acc = np.zeros(360)
-
-# for a in enumerate(angles):
-#     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
+cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test, cnn_model, pca_model, dnn_model)
+plt.plot(angles, cnn_acc)
+plt.show()
 
 
+#GAUSSIAN BLUR TESTS
+blurs = np.arange(0, 2, 0.1)
+cnn_acc, pca_acc, dnn_acc = run_attacks(blurs, gaussian_blur_database, x_test, y_test, cnn_model, pca_model, dnn_model)
 
-# #BLUR TESTS
-# blurs = np.arange(0, 360)
-
-# cnn_acc = np.zeros(360)
-# pca_acc = np.zeros(360)
-# dnn_acc = np.zeros(360)
-
-# for a in enumerate(angles):
-#     cnn_acc[a] = cnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     pca_acc[a] = pca_model.evaluate(rotate_database(x_test, 0, a))[1]
-#     #dnn_acc[a] = dnn_model.evaluate(rotate_database(x_test, 0, a))[1]
-
-
-#pca_model = PCA_model(50, 10)
-#pca_model.fit(x_train[:100], y_train_cat[:100])
-#pca_model.save("minimodel")
-#pca_model = PCA_model.load("minimodel")
-
-# FLIP Test
-# cnn_acc_flip = 0
-# pca_acc_flip = 0
-# dnn_acc = 0
-
-# flipped_x_test = flip_image(x_test)
-# cnn_acc_flip = cnn_model.evaluate(flipped_x_test, y_test)[1]
-# pca_acc_flip = pca_model.evaluate(flipped_x_test, y_test)[1]
-# dnn_acc_flip = dnn_model.evaluate(flipped_x_test, y_test)[1]
-# plt.imshow(flipped_x_test[0])
-# plt.show()

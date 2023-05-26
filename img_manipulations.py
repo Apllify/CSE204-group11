@@ -37,6 +37,9 @@ import scipy
 import perlin_numpy
 
 import random
+import warnings
+
+warnings.filterwarnings('ignore')
 
 
 def rotate_image(img, rot_angle):
@@ -112,12 +115,28 @@ def rotate_database(images, min_rot, max_rot):
     min_rot, max_rot : rotation angles in degree, can be negative, must be integers
     """
 
+    new_images = np.zeros_like(images)
+
+
+    for i in range(images.shape[0]):
+        rot = random.randint(min_rot, max_rot)
+        np.append(new_images, rotate_image(images[i], rot))
+
+    return new_images
+
+def gaussian_blur_database(images, min_blur, max_blur):
+    """
+    Returns a new database that maches the rotation requirements
+
+    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
+    """
+
     new_images = np.array([])
 
 
     for image in images:
-        rot = random.randint(min_rot, max_rot)
-        np.append(new_images, rotate_image(image, rot))
+        blur = random.randint(min_blur, max_blur)
+        np.append(new_images, gaussian_blur(image, blur))
 
     return new_images
 
@@ -138,4 +157,4 @@ def prep_rotations(x_train, y_train, x_test, y_test):
             new_y_test.append(num)
             new_x_test.append(x_test[i])
 
-    return (new_x_train, new_y_train, new_x_test, new_y_test)
+    return (np.array(new_x_train), np.array(new_y_train), np.array(new_x_test), np.array(new_y_test))
