@@ -59,8 +59,8 @@ cnn_model.load_weights('cnn_weights')
 
 # #ROTATION TESTS
 angles = np.arange(0, 360)
-cnn_acc, pca_acc, dnn_acc = attack_tests(angles, rotate_database, x_test, y_test cnn_model, pca_model, dnn_model)
+cnn_acc, pca_acc, dnn_acc = attack_tests(angles, rotate_database, x_test, y_test, cnn_model, pca_model, dnn_model)
 
 #GAUSSIAN BLUR TESTS
 blurs = np.arange(0, 2, 0.1)
-cnn_acc, pca_acc, dnn_acc = attack_tests(blurs, gaussian_blur_database, x_test, y_test cnn_model, pca_model, dnn_model)
+cnn_acc, pca_acc, dnn_acc = attack_tests(blurs, gaussian_blur_database, x_test, y_test, cnn_model, pca_model, dnn_model)
