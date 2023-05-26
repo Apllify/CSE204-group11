@@ -39,7 +39,7 @@ cnn_model.load_weights('cnn_weights')
 # print(loss, acc)
 
 
-
+#comment for testing
 
 
 #ROTATION TESTS
