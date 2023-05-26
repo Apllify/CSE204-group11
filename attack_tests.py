@@ -14,9 +14,12 @@ def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca
     print('col cazzo')
 
     for i, val in np.ndenumerate(sample_list):
-        cnn_acc[i] = cnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
-        pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)[1]
-        dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)[1]  
+        print("AAAAAAAAAAAAAAAAAAAA")
+        print(attack_func(database_x, 0, val))
+        dnn_model.evaluate()
+        cnn_acc[i] = cnn_model.evaluate( (attack_func(database_x, 0, val)), database_y)
+        pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)
+        dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)
 
     return cnn_acc, pca_acc, dnn_acc
 
@@ -89,7 +92,6 @@ def generate_spoofed_dataset(database_x, database_y):
 
             else:
                 np.append(spoofed_dataset, flip_image(image))
-
 
     return spoofed_dataset
 

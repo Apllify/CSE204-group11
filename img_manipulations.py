@@ -115,9 +115,9 @@ def rotate_database(images, min_rot, max_rot):
     new_images = np.array([])
 
 
-    for image in images:
+    for i in range(images.shape[0]):
         rot = random.randint(min_rot, max_rot)
-        np.append(new_images, rotate_image(image, rot))
+        np.append(new_images, rotate_image(images[i], rot))
 
     return new_images
 

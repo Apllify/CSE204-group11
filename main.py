@@ -1,15 +1,14 @@
 import matplotlib as plt
 import numpy as np
-from img_manipulations import *
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
-from attack_tests import *
 
 
 from models import CNN_model, PCA_model
-import attack_tests
+from img_manipulations import *
+from attack_tests import *
 
 MAX_BLUR = 2
 
@@ -55,10 +54,15 @@ cnn_model.load_weights('cnn_weights')
 
 
 
+fig = plt.figure(figsize=(5, 5))
+
+x_new = rotate_database(x_test, 80, 90)
+
 
 
 # #ROTATION TESTS
 angles = np.arange(0, 360)
+
 cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test, cnn_model, pca_model, dnn_model)
 plt.plot(angles, cnn_acc)
 plt.show()
