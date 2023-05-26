@@ -1,11 +1,13 @@
 import matplotlib as plt
 import numpy as np
-from models import CNN_model, PCA_model
 from img_manipulations import *
 import tensorflow.keras.datasets.mnist as mnist
 from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
+
+from models import CNN_model, PCA_model
+import attack_tests
 
 MAX_BLUR = 2
 
