@@ -46,12 +46,8 @@ class PCA_model(object):
     epochs = 5
 
 
-<<<<<<< HEAD
     def __init__(self, component_count, output_size, generate_network=True, perform_PCM=True):
         
-=======
-    def __init__(self, component_count, output_size, generate_network=True):
->>>>>>> 0f3e8e1c123c4c06ba0a54e4acf1d1b49b94d7a1
         """
         init sets up the model itself
         """
@@ -59,14 +55,9 @@ class PCA_model(object):
         # instance attributes
         self.output_size = output_size
         self.component_count = component_count
-<<<<<<< HEAD
         self.perform_PCM = perform_PCM
             
         
-=======
-
-        self.truncate_matrix = None
->>>>>>> 0f3e8e1c123c4c06ba0a54e4acf1d1b49b94d7a1
         self.is_trained = False
         
         if (generate_network):
