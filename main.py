@@ -13,6 +13,8 @@ MAX_BLUR = 2
 x_train = x_train / 255  
 x_test = x_test / 255
 
+y_train_cat = utils.to_categorical(y_train, 10)
+y_test_cat = utils.to_categorical(y_test, 10)
 
 
 def one_hot_encode(y):
@@ -21,7 +23,7 @@ def one_hot_encode(y):
     return res
 
 
-y_train_cat = utils.to_categorical(y_train, 10)
+
 
 
 #so clean :0
