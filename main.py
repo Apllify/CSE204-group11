@@ -64,26 +64,37 @@ cnn_model.load_weights('cnn_weights')
 
 
 #BOILERPLATE code for generating and plotting the effect of an attack
-n_samples = 8
+n_samples = 12
+attack_function = box_blur_database
 
 arguments = np.zeros((n_samples, 2))
-arguments[:, 0] = [0, 10, 20, 30 ,40, 50, 60, 70]
-arguments[:, 1] = [10, 20, 30, 40, 50, 60, 70, 80]
-x_axis = [5, 15, 25, 35, 45, 55, 65, 75]
+arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+arguments[:, 1] = arguments[:, 0]
+
+x_axis = arguments[:, 0]
 
 model_list = [pca_model, dnn_model, cnn_model]
 
-result = run_attacks(rx_test, ry_test_cat, model_list, rotate_database, arguments)
+
+result = run_attacks(rx_test, ry_test_cat, model_list, attack_function, arguments)
 
 
 plt.plot(x_axis, result[0], label="PCA Model")
 plt.plot(x_axis, result[1], label="DNN Model")
 plt.plot(x_axis, result[2], label="CNN Model")
 plt.legend(loc="upper right")
-plt.xlabel("Average degree of rotation")
+plt.xlabel("Kernel/Intensity of Box Blur")
 plt.ylabel("Accuracy of models")
+
 
 plt.show()
 
 
 
+# fig = plt.figure()
+# noise_test = x_test[0]
+
+# for i in range(25):
+#     fig.add_subplot(5, 5, i+1)
+#     plt.axis("off")
+#     plt.imshow(flip_image(x_test[i]))

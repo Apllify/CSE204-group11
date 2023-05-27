@@ -43,7 +43,9 @@ def gaussian_blur(img, sigma=1):
     gaussian_blur(img, sigma=1)
     img : an image in numpy array form
     sigma : the intensity of the blur, anything above 1.5 is very hard to recognize for humans
-
+    
+    sigma <= 1.5 for human readability
+    
     returns a new blurred version of the image
     """
     return scipy.ndimage.gaussian_filter(img, sigma)
@@ -54,6 +56,8 @@ def box_blur(img, kernel=2):
     box_blur(img, kernel=2)
     img : an image in numpy array form
     kernel : the integer size of the box used in the blur, woudln't reccomend going above 4
+    
+    kernel <= 4 for human readability
 
     returns a new blurred version of the image
     """
@@ -65,6 +69,8 @@ def uniform_noise(img, max_noise):
     uniform_noise(img, max_noise)
     img : an image in numpy array form
     max_noise : the maximum absolute value of the noise added to any given pixel, doesn't affect frequency
+    
+    max_noise <= 3/10 for human readability
 
     returns a new noisier version of the image
     """
@@ -77,6 +83,8 @@ def perlin_noise(img, max_noise):
     perlin_noise(img, max_noise)
     img : an image in numpy array form
     max_noise : the maximum absolute value of the perlin noise added to any given pixel, doesn't affect frequency
+
+    max_moise <= 1.25 for human readability
 
     returns a new noisier version of the image
     """

@@ -28,6 +28,7 @@ def run_attacks(database_x, database_y, model_list, attack_func, attack_argument
     Returns a matrix with N rows and M columns
     where N : number of models in model_list
     and M : number of separate arguments in attack_arguments
+    Basically, each row of the output is a series of accuracy samples of one of the models
     
     IF there is only one model given, the function returns a simple list of all
     the accuracy samples
@@ -43,11 +44,15 @@ def run_attacks(database_x, database_y, model_list, attack_func, attack_argument
 
     for measure_i in range(n_measures):
         
-        cur_arguments = attack_arguments[measure_i]
-        new_database_x = attack_func(database_x, *cur_arguments)
+        #use the current arguments to generate a new, harder database
+        try : 
+            cur_arguments = attack_arguments[measure_i]
+            new_database_x = attack_func(database_x, *cur_arguments)
+        except:
+            raise Exception ("Arguments count or shape didn't match function !")
         
+        #measure each model's accuracy on that database
         for model_i in range(n_models):
-            
             current_acc = model_list[model_i].evaluate(new_database_x, database_y)[1]
             accs[model_i, measure_i] = current_acc
 
@@ -89,6 +94,8 @@ def generate_spoofed_dataset(database_x, database_y):
 
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
+
+
 
     for i, image in np.ndenumerate(database_x):
         rand = random.random() * total
@@ -132,20 +139,3 @@ def generate_spoofed_dataset(database_x, database_y):
 
     return spoofed_dataset
 
-# Visualizing blur 
-
-# fig = plt.figure(figsize=(5, 5))
-
-# for i in range(5):
-#     for j in range(5):
-#         fig.add_subplot(i, j)
-#         plt.imshow(gaussian_blur(x_train[j], i))
-# plt.show()
-
-# f, axes = plt.subplots(5, 5)
-    
-# for i, row in enumerate(axes):
-#     for j, ax in enumerate(row):
-#         ax.imshow(gaussian_blur(x_train[j], 2))
-
-# plt.show()
