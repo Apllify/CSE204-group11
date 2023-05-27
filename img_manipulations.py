@@ -141,20 +141,22 @@ def gaussian_blur_database(images, min_blur, max_blur):
     return new_images
 
 
-def prep_rotations(x_train, y_train, x_test, y_test):
-    new_x_train = []
-    new_y_train = []
-    new_x_test = []
-    new_y_test = []
-
-    for i, num in enumerate(y_train):
-        if num not in (6, 9):
-            new_y_train.append(num)
-            new_x_train.append(x_train[i])
+def prep_rotations(x, y):
+    """
+    Removes all instances of the numbers 6 and 9 from input datasets
     
-    for i, num in enumerate(y_test):
-        if num not in (6, 9):
-            new_y_test.append(num)
-            new_x_test.append(x_test[i])
+    Returns the new, purged, datasets
+    """
 
-    return (np.array(new_x_train), np.array(new_y_train), np.array(new_x_test), np.array(new_y_test))
+    new_x = []
+    new_y = []
+
+
+    for i, num in enumerate(y):
+        if num not in (6, 9):
+            new_y.append(num)
+            new_x.append(x[i])
+    
+
+
+    return (np.array(new_x), np.array(new_y))

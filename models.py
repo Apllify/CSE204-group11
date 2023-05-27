@@ -232,6 +232,9 @@ class PCA_model(object):
         pca.model = network
         pca.is_trained = True
         pca.truncate_matrix = truncate_matrix
+        
+        if(truncate_matrix.size == 0):
+            pca.perform_PCA = False
 
         return pca
 
