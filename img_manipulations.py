@@ -18,25 +18,10 @@ SUMMARY :
         - perlin_noise(img, max_noise)
 """
 
+#global imports
 import numpy as np
-import pandas as pd
-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-from sklearn import decomposition
-from sklearn import datasets
-
-import tensorflow.keras.datasets.mnist as mnist
-import tensorflow as tf
-from tensorflow.keras.layers import Flatten, Dense, Input, BatchNormalization
-from tensorflow.keras import Model
-from tensorflow.keras.models import Sequential
-
 import scipy
 import perlin_numpy
-
-import random
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -108,57 +93,12 @@ def flip_image(image):
     return 1 - image
 
 
-def rotate_database(images, min_rot, max_rot):
-    """
-    Returns a new database that maches the rotation requirements
-
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
-    """
-
-    new_images = np.zeros_like(images)
-
-
-    for i in range(images.shape[0]):
-        rot = random.randint(min_rot, max_rot)
-        new_images[i] = rotate_image(images[i], rot)
-
-    return new_images
 
 
 
-def gaussian_blur_database(images, min_blur, max_blur):
-    """
-    Returns a new database that maches the rotation requirements
-
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
-    """
-
-    new_images = np.zeros_like(images)
 
 
-    for i in range(images.shape[0]):
-        blur = random.randint(min_blur, max_blur)
-        new_images[i]= gaussian_blur(images[i], blur)
-
-    return new_images
 
 
-def prep_rotations(x, y):
-    """
-    Removes all instances of the numbers 6 and 9 from input datasets
-    
-    Returns the new, purged, datasets
-    """
-
-    new_x = []
-    new_y = []
 
 
-    for i, num in enumerate(y):
-        if num not in (6, 9):
-            new_y.append(num)
-            new_x.append(x[i])
-    
-
-
-    return (np.array(new_x), np.array(new_y))

@@ -1,3 +1,4 @@
+#global imports
 import matplotlib as plt
 import numpy as np
 import tensorflow.keras.datasets.mnist as mnist
@@ -5,12 +6,12 @@ from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
 
-
-
-
+#local imports
 from models import CNN_model, PCA_model
-from img_manipulations import *
 from attack_tests import run_attacks, generate_spoofed_dataset
+from img_manipulations import *
+from database_manipulations import *
+
 
 #CONSTANTS
 MAX_BLUR = 2
@@ -35,16 +36,6 @@ ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
-
-# fig = plt.figure(figsize=(1, 5))
-
-# x_new = rotate_database(x_test, 89, 90)
-
-# for j in range(5):
-#     fig.add_subplot(j)
-#     plt.imshow(x_train[j])
-# plt.show()
-
 """ PCA Model Training Code
 pca_model = PCA_model(250, 10)
 pca_model.fit(x_train, y_train_cat)
@@ -63,7 +54,7 @@ cnn_model.save_weights('cnn_weights')
 """
 
 
-#so clean :0
+#loading the models from memory
 pca_model = PCA_model.load("pca_weights") 
 dnn_model = PCA_model.load("dnn_weights") 
 
@@ -72,25 +63,27 @@ cnn_model.load_weights('cnn_weights')
 
 
 
-#testing attack functions
-arguments = [[5, 10]]
-model_list = [pca_model]
+#BOILERPLATE code for generating and plotting the effect of an attack
+n_samples = 8
 
-result = run_attacks(x_test[:10], y_test_cat[:10], model_list, rotate_database, arguments)
-print(result)
+arguments = np.zeros((n_samples, 2))
+arguments[:, 0] = [0, 10, 20, 30 ,40, 50, 60, 70]
+arguments[:, 1] = [10, 20, 30, 40, 50, 60, 70, 80]
+x_axis = [5, 15, 25, 35, 45, 55, 65, 75]
 
+model_list = [pca_model, dnn_model, cnn_model]
 
-
-#ROTATION TESTS
-# angles = np.array([10, 20, 30])
-
-# cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, rx_test, ry_test_cat, cnn_model, pca_model, dnn_model)
-# plt.plot(angles, cnn_acc)
-# plt.show()
+result = run_attacks(rx_test, ry_test_cat, model_list, rotate_database, arguments)
 
 
-# #GAUSSIAN BLUR TESTS
-# blurs = np.arange(0, 2, 0.1)
-# cnn_acc, pca_acc, dnn_acc = run_attacks(blurs, gaussian_blur_database, x_test, y_test, cnn_model, pca_model, dnn_model)
+plt.plot(x_axis, result[0], label="PCA Model")
+plt.plot(x_axis, result[1], label="DNN Model")
+plt.plot(x_axis, result[2], label="CNN Model")
+plt.legend(loc="upper right")
+plt.xlabel("Average degree of rotation")
+plt.ylabel("Accuracy of models")
+
+plt.show()
+
 
 
