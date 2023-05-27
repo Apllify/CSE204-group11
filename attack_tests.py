@@ -6,22 +6,59 @@ import warnings
 
 warnings.filterwarnings('ignore')
 
-def run_attacks(sample_list, attack_func, database_x, database_y, cnn_model, pca_model, dnn_model):
+
+def run_attacks(database_x, database_y, model_list, attack_func, attack_arguments) :
+    
     '''
-    Run attack and return accuracy as attack varies 
+    
+    Run attack and return accuracy lists for all three models
+    
+    database_x : the x database, in image (2d) form
+    database_y : the y database, MUST be categorical
+    
+    model_list : the list of models to be tested, they MUST all have a .evaluate() method
+    attack_func : function that takes a database and returns a modified version
+    
+    attack_arguments : a list of the arguments that the attack function will take
+    EXAMPLE : if attack_func takes 3 arguments (database included) then we can have : 
+        attack_arguments = [ (0, 1), (2, 8), (0, 3), etc... ]
+        
+        
+        
+    Returns a matrix with N rows and M columns
+    where N : number of models in model_list
+    and M : number of separate arguments in attack_arguments
+    
+    IF there is only one model given, the function returns a simple list of all
+    the accuracy samples
+        
     '''
-    cnn_acc = np.zeros(len(sample_list))
-    pca_acc = np.zeros(len(sample_list))
-    dnn_acc = np.zeros(len(sample_list))
+    
+    n_measures = len(attack_arguments)
+    n_models = len(model_list)
+    
+    accs = np.zeros((n_models, n_measures)) #one row per model
 
 
-    for i, val in np.ndenumerate(sample_list):
-        cnn_acc[i] = cnn_model.evaluate( (attack_func(database_x, 0, val)), database_y)
-        pca_acc[i] = pca_model.evaluate(attack_func(database_x, 0, val), database_y)
-        dnn_acc[i] = dnn_model.evaluate(attack_func(database_x, 0, val), database_y)
 
+    for measure_i in range(n_measures):
+        
+        cur_arguments = attack_arguments[measure_i]
+        new_database_x = attack_func(database_x, *cur_arguments)
+        
+        for model_i in range(n_models):
+            
+            current_acc = model_list[model_i].evaluate(new_database_x, database_y)[1]
+            accs[model_i, measure_i] = current_acc
 
-    return cnn_acc, pca_acc, dnn_acc
+    
+
+    #if only one model was given, simplify output
+    if accs.shape[0] == 1:
+        accs = accs[0]
+    
+    
+    return accs
 
 
 
@@ -33,7 +70,7 @@ def generate_spoofed_dataset(database_x, database_y):
     database_y should NOT be categorical, just the regular database_y
     
     """
-    spoofed_dataset = np.array([])
+    spoofed_dataset = np.zeros_like(database_x)
 
     #distributions of filters (relative values)
     rotation_odd = 1
@@ -59,39 +96,39 @@ def generate_spoofed_dataset(database_x, database_y):
         if database_y[i] not in (6, 9): #avoid rotating the numbers 6 and 9 
 
             if rand <= rotation_odd/total : 
-                np.append(spoofed_dataset, rotate_image(image, rotation_angle))
+                spoofed_dataset[i] = rotate_image(image, rotation_angle)
 
             elif rand <= (rotation_odd + gaussian_blur_odd)/total:
-                np.append(spoofed_dataset, gaussian_blur(image, gaussian_blur_sigma))
+                spoofed_dataset[i] = gaussian_blur(image, gaussian_blur_sigma)
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd)/total:
-                np.append(spoofed_dataset, box_blur(image, box_blur_kernel) )
+                spoofed_dataset[i] = box_blur(image, box_blur_kernel) 
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total:
-                np.append(spoofed_dataset, uniform_noise(image, uniform_max_noise))
+                spoofed_dataset[i] = uniform_noise(image, uniform_max_noise)
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total:
-                np.append(spoofed_dataset, perlin_noise(image, perlin_max_noise))
+                spoofed_dataset[i] = perlin_noise(image, perlin_max_noise)
 
             else:
-                np.append(spoofed_dataset, flip_image(image))
+                spoofed_dataset[i] = flip_image(image)
 
 
         else:
             if rand <= (rotation_odd + gaussian_blur_odd)/total:
-                np.append(spoofed_dataset, gaussian_blur(image, gaussian_blur_sigma))
+                spoofed_dataset[i] = gaussian_blur(image, gaussian_blur_sigma)
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd)/total:
-                np.append(spoofed_dataset, box_blur(image, box_blur_kernel) )
+                spoofed_dataset[i] = box_blur(image, box_blur_kernel) 
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total:
-                np.append(spoofed_dataset, uniform_noise(image, uniform_max_noise))
+                spoofed_dataset[i] = uniform_noise(image, uniform_max_noise)
 
             elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total:
-                np.append(spoofed_dataset, perlin_noise(image, perlin_max_noise))
+                spoofed_dataset[i] = perlin_noise(image, perlin_max_noise)
 
             else:
-                np.append(spoofed_dataset, flip_image(image))
+                spoofed_dataset[i] = flip_image(image)
 
     return spoofed_dataset
 

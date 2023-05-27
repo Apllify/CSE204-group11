@@ -10,7 +10,7 @@ import matplotlib.pyplot  as plt
 
 from models import CNN_model, PCA_model
 from img_manipulations import *
-from attack_tests import *
+from attack_tests import run_attacks, generate_spoofed_dataset
 
 #CONSTANTS
 MAX_BLUR = 2
@@ -27,8 +27,8 @@ y_train_cat = utils.to_categorical(y_train, 10)
 y_test_cat = utils.to_categorical(y_test, 10)
 
 #special version of dataset for rotations
-rx_train_r, ry_train = prep_rotations(x_train, y_train)
-rx_test_r, ry_test = prep_rotations(x_test, y_test)
+rx_train, ry_train = prep_rotations(x_train, y_train)
+rx_test, ry_test = prep_rotations(x_test, y_test)
 
 #get categorical versions of the rotation-ready labels
 ry_train_cat = utils.to_categorical(ry_train, 10)
@@ -70,18 +70,23 @@ dnn_model = PCA_model.load("dnn_weights")
 cnn_model = CNN_model()
 cnn_model.load_weights('cnn_weights')
 
-print(pca_model.evaluate(x_test, y_test_cat))
-print(cnn_model.evaluate(x_test, y_test_cat))
-print(dnn_model.evaluate(x_test, y_test_cat))
+
+
+#testing attack functions
+arguments = [[5, 10]]
+model_list = [pca_model]
+
+result = run_attacks(x_test[:10], y_test_cat[:10], model_list, rotate_database, arguments)
+print(result)
 
 
 
 #ROTATION TESTS
-angles = np.array([10, 20, 30])
+# angles = np.array([10, 20, 30])
 
-cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, x_test, y_test_cat, cnn_model, pca_model, dnn_model)
-plt.plot(angles, cnn_acc)
-plt.show()
+# cnn_acc, pca_acc, dnn_acc = run_attacks(angles, rotate_database, rx_test, ry_test_cat, cnn_model, pca_model, dnn_model)
+# plt.plot(angles, cnn_acc)
+# plt.show()
 
 
 # #GAUSSIAN BLUR TESTS
