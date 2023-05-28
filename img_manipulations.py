@@ -18,25 +18,10 @@ SUMMARY :
         - perlin_noise(img, max_noise)
 """
 
+#global imports
 import numpy as np
-import pandas as pd
-
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-
-from sklearn import decomposition
-from sklearn import datasets
-
-import tensorflow.keras.datasets.mnist as mnist
-import tensorflow as tf
-from tensorflow.keras.layers import Flatten, Dense, Input, BatchNormalization
-from tensorflow.keras import Model
-from tensorflow.keras.models import Sequential
-
 import scipy
 import perlin_numpy
-
-import random
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -58,7 +43,9 @@ def gaussian_blur(img, sigma=1):
     gaussian_blur(img, sigma=1)
     img : an image in numpy array form
     sigma : the intensity of the blur, anything above 1.5 is very hard to recognize for humans
-
+    
+    sigma <= 1.5 for human readability
+    
     returns a new blurred version of the image
     """
     return scipy.ndimage.gaussian_filter(img, sigma)
@@ -69,6 +56,8 @@ def box_blur(img, kernel=2):
     box_blur(img, kernel=2)
     img : an image in numpy array form
     kernel : the integer size of the box used in the blur, woudln't reccomend going above 4
+    
+    kernel <= 4 for human readability
 
     returns a new blurred version of the image
     """
@@ -80,6 +69,8 @@ def uniform_noise(img, max_noise):
     uniform_noise(img, max_noise)
     img : an image in numpy array form
     max_noise : the maximum absolute value of the noise added to any given pixel, doesn't affect frequency
+    
+    max_noise <= 3/10 for human readability
 
     returns a new noisier version of the image
     """
@@ -92,6 +83,8 @@ def perlin_noise(img, max_noise):
     perlin_noise(img, max_noise)
     img : an image in numpy array form
     max_noise : the maximum absolute value of the perlin noise added to any given pixel, doesn't affect frequency
+
+    max_moise <= 1.25 for human readability
 
     returns a new noisier version of the image
     """
@@ -108,53 +101,12 @@ def flip_image(image):
     return 1 - image
 
 
-def rotate_database(images, min_rot, max_rot):
-    """
-    Returns a new database that maches the rotation requirements
-
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
-    """
-
-    new_images = np.zeros_like(images)
 
 
-    for i in range(images.shape[0]):
-        rot = random.randint(min_rot, max_rot)
-        np.append(new_images, rotate_image(images[i], rot))
-
-    return new_images
-
-def gaussian_blur_database(images, min_blur, max_blur):
-    """
-    Returns a new database that maches the rotation requirements
-
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
-    """
-
-    new_images = np.array([])
 
 
-    for image in images:
-        blur = random.randint(min_blur, max_blur)
-        np.append(new_images, gaussian_blur(image, blur))
-
-    return new_images
 
 
-def prep_rotations(x_train, y_train, x_test, y_test):
-    new_x_train = []
-    new_y_train = []
-    new_x_test = []
-    new_y_test = []
 
-    for i, num in enumerate(y_train):
-        if num not in (6, 9):
-            new_y_train.append(num)
-            new_x_train.append(x_train[i])
-    
-    for i, num in enumerate(y_test):
-        if num not in (6, 9):
-            new_y_test.append(num)
-            new_x_test.append(x_test[i])
 
-    return (np.array(new_x_train), np.array(new_y_train), np.array(new_x_test), np.array(new_y_test))
+
