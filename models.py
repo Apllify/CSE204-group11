@@ -44,6 +44,9 @@ class CNN_model(Model):
         
     def evaluate(self, x, y):
         return super().evaluate(x.reshape(-1, 28, 28, 1), y)
+    
+    def fit(self, x, y):
+        return super().fit(x.reshape(-1, 28, 28, 1), y, epochs=3)
         
 
 
