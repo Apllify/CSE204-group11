@@ -90,7 +90,7 @@ def box_blur_database(images, min_blur, max_blur):
     return new_images
 
 
-def uniform_noise_database(images, max_noise):
+def uniform_noise_database(images, min_noise, max_noise):
     
     new_images = np.zeros_like(images)
     

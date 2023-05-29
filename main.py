@@ -34,11 +34,12 @@ ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
-pca_model = PCA_model(250, 10)
+# pca_model = PCA_model(250, 10)
 
-lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
+lattice = attack_lattice(CNN_model, (x_train, y_train_cat), (x_test, y_test_cat), uniform_noise_database, np.arange(0, 0.3, 0.015))
 
-np.savetxt("pca_gauss_lattice.txt", lattice)
+
+np.savetxt("cnn_uniform_lattice.txt", lattice)
 
 
 
@@ -60,48 +61,48 @@ cnn_model.save_weights('cnn_weights')
 """
 
 
-#loading the models from memory
-pca_model = PCA_model.load("pca_weights") 
-dnn_model = PCA_model.load("dnn_weights") 
+# #loading the models from memory
+# pca_model = PCA_model.load("pca_weights") 
+# dnn_model = PCA_model.load("dnn_weights") 
 
-cnn_model = CNN_model()
-cnn_model.load_weights('cnn_weights')
-
-
-
-#BOILERPLATE code for generating and plotting the effect of an attack
-n_samples = 8
-attack_function = perlin_noise_database
-
-arguments = np.array(  [[i/10] for i in range(8)] )
-# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# arguments[:, 1] = arguments[:, 0]
-
-#x_axis = arguments[:, 0]
-x_axis = [i/10 for i in range(8)]
-
-model_list = [pca_model, dnn_model, cnn_model]
-
-
-result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
-
-
-plt.plot(x_axis, result[0], label="PCA Model")
-plt.plot(x_axis, result[1], label="DNN Model")
-plt.plot(x_axis, result[2], label="CNN Model")
-plt.legend(loc="upper right")
-plt.xlabel("Maximum perlin noise level allowed (1 = 100%)")
-plt.ylabel("Accuracy of models")
-
-
-plt.show()
+# cnn_model = CNN_model()
+# cnn_model.load_weights('cnn_weights')
 
 
 
-# fig = plt.figure()
-# noise_test = x_test[0]
+# #BOILERPLATE code for generating and plotting the effect of an attack
+# n_samples = 8
+# attack_function = perlin_noise_database
 
-# for i in range(25):
-#     fig.add_subplot(5, 5, i+1)
-#     plt.axis("off")
-#     plt.imshow(flip_image(x_test[i]))
+# arguments = np.array(  [[i/10] for i in range(8)] )
+# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# # arguments[:, 1] = arguments[:, 0]
+
+# #x_axis = arguments[:, 0]
+# x_axis = [i/10 for i in range(8)]
+
+# model_list = [pca_model, dnn_model, cnn_model]
+
+
+# result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
+
+
+# plt.plot(x_axis, result[0], label="PCA Model")
+# plt.plot(x_axis, result[1], label="DNN Model")
+# plt.plot(x_axis, result[2], label="CNN Model")
+# plt.legend(loc="upper right")
+# plt.xlabel("Maximum perlin noise level allowed (1 = 100%)")
+# plt.ylabel("Accuracy of models")
+
+
+# plt.show()
+
+
+
+# # fig = plt.figure()
+# # noise_test = x_test[0]
+
+# # for i in range(25):
+# #     fig.add_subplot(5, 5, i+1)
+# #     plt.axis("off")
+# #     plt.imshow(flip_image(x_test[i]))
