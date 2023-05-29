@@ -108,6 +108,7 @@ def generate_spoofed_dataset(database_x, database_y):
     perlin_noise_odd = 1
     
     flip_image_odd = 2
+    
 
     #FILTER INTENSITIES (can be tweaked)
     rotation_min = 10
@@ -118,6 +119,7 @@ def generate_spoofed_dataset(database_x, database_y):
     
     uniform_max_noise = 0.3
     perlin_max_noise = 0.3
+    
     
 
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
