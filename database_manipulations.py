@@ -104,10 +104,18 @@ def perlin_noise_database(images, max_noise):
     
 
 
-def flip_database(images):
+def flip_database(images, flip=True):
+    """
+    Flips input database
     
-    new_images = 1-images
+    Param flip looks dumb but it simplifies the measurement process and 
+    avoids us having to write a lot of superfluous code down the line
     
-    return new_images
+    """
+    if flip:
+        new_images = 1-images
+        return new_images
+    else:
+        return images
     
     
