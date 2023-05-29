@@ -11,7 +11,6 @@ from tensorflow.keras import models
 import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
-import cleverhans
 import warnings
 
 warnings.filterwarnings('ignore')
@@ -48,7 +47,8 @@ class CNN_model(Model):
         return super().evaluate(x.reshape(-1, 28, 28, 1), y)
     
     def fit(self, x, y):
-        super().fit(x.reshape(-1, 28, 28, 1), y, epochs=3)
+
+        return super().fit(x.reshape(-1, 28, 28, 1), y, epochs=3)
         
 
 
@@ -60,7 +60,7 @@ class PCA_model(object):
     epochs = 5
 
 
-    def __init__(self, component_count, output_size, generate_network=True, perform_PCA=True):
+    def __init__(self, component_count=250, output_size=10, generate_network=True, perform_PCA=True):
         
         """
         init sets up the model itself

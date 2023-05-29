@@ -8,7 +8,7 @@ import matplotlib.pyplot  as plt
 
 #local imports
 from models import CNN_model, PCA_model
-from attack_tests import run_attacks, generate_spoofed_dataset
+from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 
@@ -37,6 +37,15 @@ ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
 """ PCA Model Training Code (250 components)
+=======
+pca_model = PCA_model(250, 10)
+
+lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
+
+np.savetxt("pca_gauss_lattice.txt", lattice)
+
+
+
 pca_model = PCA_model(250, 10)
 pca_model.fit(x_train, y_train_cat)
 pca_model.save("pca_weights")
