@@ -49,7 +49,7 @@ dnn_model.save("dnn_weights")
 """
 
 """ CNN Model Training Code
-cnn_model.fit(x_train.reshape(-1, 28, 28, 1), one_hot_encode(y_train))
+cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
 
