@@ -77,20 +77,27 @@ def generate_spoofed_dataset(database_x, database_y):
     """
     spoofed_dataset = np.zeros_like(database_x)
 
-    #distributions of filters (relative values)
-    rotation_odd = 1
+    #FILTER PROBABILITIES (can be tweaked)
+    rotation_odd = 2
+    
     gaussian_blur_odd = 1
     box_blur_odd = 1
+    
     uniform_noise_odd = 1
     perlin_noise_odd = 1
-    flip_image_odd = 1
+    
+    flip_image_odd = 2
 
-    #quirks of filter that need them
-    rotation_angle = 20
+    #FILTER INTENSITIES (can be tweaked)
+    rotation_min = 10
+    rotation_max = 30
+    
     gaussian_blur_sigma = 1
     box_blur_kernel = 2
+    
     uniform_max_noise = 0.3
     perlin_max_noise = 0.3
+    
 
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
@@ -103,7 +110,13 @@ def generate_spoofed_dataset(database_x, database_y):
         if database_y[i] not in (6, 9): #avoid rotating the numbers 6 and 9 
 
             if rand <= rotation_odd/total : 
-                spoofed_dataset[i] = rotate_image(image, rotation_angle)
+                
+                #give rotation random angle and sign
+                current_rot = (random.random() * (rotation_max - rotation_min)) + rotation_min
+                random_sign = (random.randint(0, 1) * 2) - 1
+                current_rot *= random_sign
+                
+                spoofed_dataset[i] = rotate_image(image, current_rot)
 
             elif rand <= (rotation_odd + gaussian_blur_odd)/total:
                 spoofed_dataset[i] = gaussian_blur(image, gaussian_blur_sigma)
