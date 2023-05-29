@@ -1,2 +1,2 @@
-model_checkpoint_path: "cnn_weights"
-all_model_checkpoint_paths: "cnn_weights"
+model_checkpoint_path: "super_cnn_weights"
+all_model_checkpoint_paths: "super_cnn_weights"
