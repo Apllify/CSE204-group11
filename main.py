@@ -38,7 +38,7 @@ ry_test_cat = utils.to_categorical(ry_test, 10)
 
 pca_model = PCA_model(250, 10)
 
-lattice = attack_lattice(pca_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
+lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
 
 np.savetxt("pca_gauss_lattice.txt", lattice)
 

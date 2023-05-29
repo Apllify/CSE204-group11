@@ -58,7 +58,7 @@ class PCA_model(object):
     epochs = 5
 
 
-    def __init__(self, component_count, output_size, generate_network=True, perform_PCA=True):
+    def __init__(self, component_count=250, output_size=10, generate_network=True, perform_PCA=True):
         
         """
         init sets up the model itself
