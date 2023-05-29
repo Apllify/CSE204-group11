@@ -19,6 +19,7 @@ warnings.filterwarnings('ignore')
 
 
 class CNN_model(Model):
+    
     def __init__(self):
         super(CNN_model, self).__init__()
         self.conv1 = Conv2D(64, (3, 3), strides=(2, 2), activation="relu", padding="same")
@@ -44,6 +45,10 @@ class CNN_model(Model):
         
     def evaluate(self, x, y):
         return super().evaluate(x.reshape(-1, 28, 28, 1), y)
+    
+    def fit(self, x, y):
+
+        return super().fit(x.reshape(-1, 28, 28, 1), y, epochs=3)
         
 
 

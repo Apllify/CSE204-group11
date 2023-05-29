@@ -108,10 +108,11 @@ def generate_spoofed_dataset(database_x, database_y):
     perlin_noise_odd = 1
     
     flip_image_odd = 2
+    
 
     #FILTER INTENSITIES (can be tweaked)
-    rotation_min = 10
-    rotation_max = 30
+    rotation_min = 20
+    rotation_max = 80
     
     gaussian_blur_sigma = 1
     box_blur_kernel = 2
@@ -119,18 +120,21 @@ def generate_spoofed_dataset(database_x, database_y):
     uniform_max_noise = 0.3
     perlin_max_noise = 0.3
     
+    
 
     total = rotation_odd + gaussian_blur_odd + box_blur_odd + \
             uniform_noise_odd + perlin_noise_odd + flip_image_odd
 
 
 
-    for i, image in np.ndenumerate(database_x):
-        rand = random.random() * total
+    for i in range(database_x.shape[0]):
+        
+        rand = random.random() 
+        image = database_x[i]
 
         if database_y[i] not in (6, 9): #avoid rotating the numbers 6 and 9 
 
-            if rand <= rotation_odd/total : 
+            if rand <= (rotation_odd/total) : 
                 
                 #give rotation random angle and sign
                 current_rot = (random.random() * (rotation_max - rotation_min)) + rotation_min
@@ -139,16 +143,16 @@ def generate_spoofed_dataset(database_x, database_y):
                 
                 spoofed_dataset[i] = rotate_image(image, current_rot)
 
-            elif rand <= (rotation_odd + gaussian_blur_odd)/total:
+            elif rand <= ((rotation_odd + gaussian_blur_odd)/total):
                 spoofed_dataset[i] = gaussian_blur(image, gaussian_blur_sigma)
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd)/total:
+            elif rand <= ((rotation_odd + gaussian_blur_odd + box_blur_odd)/total):
                 spoofed_dataset[i] = box_blur(image, box_blur_kernel) 
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total:
+            elif rand <= ((rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total):
                 spoofed_dataset[i] = uniform_noise(image, uniform_max_noise)
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total:
+            elif rand <= ((rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total):
                 spoofed_dataset[i] = perlin_noise(image, perlin_max_noise)
 
             else:
@@ -159,13 +163,13 @@ def generate_spoofed_dataset(database_x, database_y):
             if rand <= (rotation_odd + gaussian_blur_odd)/total:
                 spoofed_dataset[i] = gaussian_blur(image, gaussian_blur_sigma)
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd)/total:
+            elif rand <= (rotation_odd + gaussian_blur_odd + box_blur_odd)/total:
                 spoofed_dataset[i] = box_blur(image, box_blur_kernel) 
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total:
+            elif rand <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd)/total:
                 spoofed_dataset[i] = uniform_noise(image, uniform_max_noise)
 
-            elif random <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total:
+            elif rand <= (rotation_odd + gaussian_blur_odd + box_blur_odd + uniform_noise_odd + perlin_noise_odd)/total:
                 spoofed_dataset[i] = perlin_noise(image, perlin_max_noise)
 
             else:
