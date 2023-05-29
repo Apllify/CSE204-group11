@@ -12,10 +12,8 @@ from attack_tests import run_attacks, generate_spoofed_dataset
 from img_manipulations import *
 from database_manipulations import *
 
-
 #CONSTANTS
 MAX_BLUR = 2
-
 
 
 #Load the main MNIST Dataset 
