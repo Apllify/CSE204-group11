@@ -36,12 +36,6 @@ ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
-pca_model = PCA_model(250, 10)
-
-lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
-
-np.savetxt("pca_gauss_lattice.txt", lattice)
-
 
 
 """ PCA Model Training Code
@@ -72,31 +66,41 @@ cnn_model.load_weights('cnn_weights')
 
 
 #BOILERPLATE code for generating and plotting the effect of an attack
-n_samples = 8
-attack_function = perlin_noise_database
-
-arguments = np.array(  [[i/10] for i in range(8)] )
-# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# arguments[:, 1] = arguments[:, 0]
-
-#x_axis = arguments[:, 0]
-x_axis = [i/10 for i in range(8)]
-
-model_list = [pca_model, dnn_model, cnn_model]
+# n_samples = 8
+attack_func = perlin_noise_database
 
 
-result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
 
+# arguments = np.array(  [[i/10] for i in range(8)] )
+# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# # arguments[:, 1] = arguments[:, 0]
 
-plt.plot(x_axis, result[0], label="PCA Model")
-plt.plot(x_axis, result[1], label="DNN Model")
-plt.plot(x_axis, result[2], label="CNN Model")
-plt.legend(loc="upper right")
-plt.xlabel("Maximum perlin noise level allowed (1 = 100%)")
-plt.ylabel("Accuracy of models")
+# #x_axis = arguments[:, 0]
+# x_axis = [i/10 for i in range(8)]
 
+# model_list = [pca_model, dnn_model, cnn_model]
 
+attack_range = np.linspace(0, 0.7, 10)
+
+lattice = attack_lattice(CNN_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_func, attack_range)
+
+plt.pcolormesh(lattice, cmap='vridis')
 plt.show()
+
+np.savetxt('lattice_perlin_cnn', lattice)
+
+# result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
+
+
+# plt.plot(x_axis, result[0], label="PCA Model")
+# plt.plot(x_axis, result[1], label="DNN Model")
+# plt.plot(x_axis, result[2], label="CNN Model")
+# plt.legend(loc="upper right")
+# plt.xlabel("Maximum perlin noise level allowed (1 = 100%)")
+# plt.ylabel("Accuracy of models")
+
+
+# plt.show()
 
 
 
