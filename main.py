@@ -12,10 +12,8 @@ from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 
-
 #CONSTANTS
 MAX_BLUR = 2
-
 
 
 #Load the main MNIST Dataset 
@@ -36,16 +34,9 @@ ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
+# pca_model = PCA_model(250, 10)
 
 """ PCA Model Training Code (250 components)
-
-pca_model = PCA_model(250, 10)
-
-lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
-
-np.savetxt("pca_gauss_lattice.txt", lattice)
-
-
 pca_model = PCA_model(250, 10)
 pca_model.fit(x_train, y_train_cat)
 pca_model.save("pca_weights")
@@ -58,17 +49,11 @@ dnn_model.save("dnn_weights")
 """
 
 """ CNN Model Training Code
-cnn_model.fit(x_train.reshape(-1, 28, 28, 1), one_hot_encode(y_train))
+cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
 
-
-
-
-
 #training the supersoldier models
-new_db= generate_spoofed_dataset(x_train, y_train)
-
 
 
 
@@ -109,59 +94,40 @@ new_db= generate_spoofed_dataset(x_train, y_train)
 
 
 #loading the models from memory
-# pca_model = PCA_model.load("pca_weights") 
-# dnn_model = PCA_model.load("dnn_weights") 
 
-# cnn_model = CNN_model()
-# cnn_model.load_weights('cnn_weights')
+cnn = CNN_model()
+cnn.load_weights("cnn_weights")
 
-
-
-#BOILERPLATE code for generating and plotting the effect of an attack
-# n_samples = 8
-attack_func = perlin_noise_database
-
-
-
-
-# arguments = np.array(  [[i/10] for i in range(8)] )
-# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# # arguments[:, 1] = arguments[:, 0]
-
+super_cnn = CNN_model()
+super_cnn.load_weights("super_cnn_weights")
 
 
 # model_list = [pca_model, dnn_model, cnn_model]
 
+#BOILERPLATE code for generating and plotting the effect of an attack
+n_samples = 8
+attack_function = uniform_noise_database
 
-attack_range = np.linspace(0, 0.7, 10)
+arguments = np.array(  [[i/10] for i in range(8)] )
+# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# arguments[:, 1] = arguments[:, 0]
 
-lattice = attack_lattice(CNN_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_func, attack_range)
+#x_axis = arguments[:, 0]
+x_axis = [i/10 for i in range(8)]
 
-plt.pcolormesh(lattice, cmap='vridis')
-plt.show()
+model_list = [cnn, super_cnn]
+x_axis = [i/20 for i in range(30)]
 
-
-np.savetxt('lattice_perlin_cnn', lattice)
 
 # result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
 
 
-# plt.plot(x_axis, result[0], label="PCA Model")
-# plt.plot(x_axis, result[1], label="DNN Model")
-# plt.plot(x_axis, result[2], label="CNN Model")
-# plt.legend(loc="upper right")
-# plt.xlabel("Maximum perlin noise level allowed (1 = 100%)")
-# plt.ylabel("Accuracy of models")
-
-
-# plt.show()
+plt.plot(x_axis, result[0], label="CNN Model")
+plt.plot(x_axis, result[1], label="Super CNN Model")
+plt.legend(loc="upper right")
+plt.xlabel("Noise in Test Database")
+plt.ylabel("Accuracy of models")
 
 
 
-# fig = plt.figure()
-# noise_test = x_test[0]
-
-# for i in range(25):
-#     fig.add_subplot(5, 5, i+1)
-#     plt.axis("off")
-#     plt.imshow(flip_image(x_test[i]))
+plt.show()
