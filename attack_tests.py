@@ -78,12 +78,15 @@ def generate_spoofed_dataset(database_x, database_y):
     spoofed_dataset = np.zeros_like(database_x)
 
     #FILTER PROBABILITIES (can be tweaked)
-    rotation_odd = 1
+    rotation_odd = 2
+    
     gaussian_blur_odd = 1
     box_blur_odd = 1
+    
     uniform_noise_odd = 1
     perlin_noise_odd = 1
-    flip_image_odd = 1
+    
+    flip_image_odd = 2
 
     #FILTER INTENSITIES (can be tweaked)
     rotation_min = 10
