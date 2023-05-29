@@ -8,7 +8,7 @@ import matplotlib.pyplot  as plt
 
 #local imports
 from models import CNN_model, PCA_model
-from attack_tests import run_attacks, generate_spoofed_dataset
+from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 
@@ -32,6 +32,14 @@ rx_test, ry_test = prep_rotations(x_test, y_test)
 #get categorical versions of the rotation-ready labels
 ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
+
+
+pca_model = PCA_model(250, 10)
+
+lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
+
+np.savetxt("pca_gauss_lattice.txt", lattice)
+
 
 
 """ PCA Model Training Code
