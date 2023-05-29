@@ -11,7 +11,6 @@ from tensorflow.keras import models
 import tensorflow.keras.datasets.mnist as mnist
 import matplotlib.pyplot as plt
 
-# import cleverhans
 import warnings
 
 warnings.filterwarnings('ignore')
