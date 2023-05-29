@@ -36,14 +36,14 @@ ry_train_cat = utils.to_categorical(ry_train, 10)
 ry_test_cat = utils.to_categorical(ry_test, 10)
 
 
+
 """ PCA Model Training Code (250 components)
-=======
+
 pca_model = PCA_model(250, 10)
 
 lattice = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), gaussian_blur_database, np.arange(0, 2, 0.1))
 
 np.savetxt("pca_gauss_lattice.txt", lattice)
-
 
 
 pca_model = PCA_model(250, 10)
@@ -119,17 +119,29 @@ new_db= generate_spoofed_dataset(x_train, y_train)
 
 #BOILERPLATE code for generating and plotting the effect of an attack
 # n_samples = 8
-# attack_function = perlin_noise_database
+attack_func = perlin_noise_database
+
+
+
 
 # arguments = np.array(  [[i/10] for i in range(8)] )
-# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# arguments[:, 1] = arguments[:, 0]
+# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# # arguments[:, 1] = arguments[:, 0]
 
-#x_axis = arguments[:, 0]
-# x_axis = [i/10 for i in range(8)]
+
 
 # model_list = [pca_model, dnn_model, cnn_model]
 
+
+attack_range = np.linspace(0, 0.7, 10)
+
+lattice = attack_lattice(CNN_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_func, attack_range)
+
+plt.pcolormesh(lattice, cmap='vridis')
+plt.show()
+
+
+np.savetxt('lattice_perlin_cnn', lattice)
 
 # result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
 

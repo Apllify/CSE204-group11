@@ -100,7 +100,7 @@ def uniform_noise_database(images, max_noise):
     return new_images
         
         
-def perlin_noise_database(images, max_noise):
+def perlin_noise_database(images, min_noise, max_noise):
     
     new_images = np.zeros_like(images)
     
