@@ -75,8 +75,8 @@ def attack_lattice(model, train_database, test_database, attack_func, attack_ran
     
     lattice = np.zeros(shape=(len(attack_range),len(attack_range)))
     
-    for x_I in attack_range:
-        for y_I in attack_range:
+    for i, x_I in np.ndenumerate(attack_range):
+        for j, y_I in np.ndenumerate(attack_range):
             new_train_dat = attack_func(train_database[0], 0, x_I)
             new_test_dat = attack_func(test_database[0], 0, y_I)
             model.fit(new_train_dat, train_database[1])
