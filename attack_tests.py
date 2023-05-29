@@ -84,9 +84,40 @@ def attack_lattice(model_class, train_database, test_database, attack_test, atta
             lattice[i][j] = model.evaluate(new_test_dat, test_database[1])[1]
             
     return lattice.T
+
+def compute_average_confidence_over_right_answers(model, x, y):
+    """computes the average confidence over images that were classified accurately. 
+    y MUST NOT be one hot encoded"""
+    y_pred = model.predict(x)
+    correct_count = 0
+    total_confidence = 0
+    for i in range(y.shape[0]):
+        if np.argmax(y_pred[i]) == y[i]:
+            correct_count += 1
+            total_confidence += np.maximum(y_pred[i])
+    return total_confidence / correct_count
     
+def compute_average_confidence_over_wrong_answers(model, x, y):
+    """computes the average confidence in the wrong answers over images that were misclassified. 
+    y MUST NOT be one hot encoded"""
+    y_pred = model.predict(x)
+    incorrect_count = 0
+    total_confidence = 0
+    for i in range(y.shape[0]):
+        if np.argmax(y_pred[i]) != y[i]:
+            incorrect_count += 1
+            total_confidence += np.maximum(y_pred[i])
+    return total_confidence / incorrect_count
 
-
+def compute_average_confidence_over_true_right_answer(model, x, y):
+    """computes average confidence in the right answer regardless of prediction.
+    y MUST NOT be one hot encoded"""
+    y_pred = model.predict(x)
+    
+    total_confidence = 0
+    for i in range(y.shape[0]):
+        total_confidence += y_pred[i][y[i]]
+    return total_confidence / y.shape[0]
 
 def generate_spoofed_dataset(database_x, database_y):
     """
