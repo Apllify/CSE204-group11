@@ -54,10 +54,6 @@ cnn_model.fit(x_train.reshape(-1, 28, 28, 1), one_hot_encode(y_train))
 cnn_model.save_weights('cnn_weights')
 """
 
-
-
-
-
 #training the supersoldier models
 
 
@@ -107,6 +103,7 @@ super_cnn = CNN_model()
 super_cnn.load_weights("super_cnn_weights")
 
 
+# model_list = [pca_model, dnn_model, cnn_model]
 
 #BOILERPLATE code for generating and plotting the effect of an attack
 n_samples = 8
@@ -120,6 +117,7 @@ arguments = np.array(  [[i/20] for i in range(30)] )
 # arguments[:, 1] = arguments[:, 0]
 
 
+# result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
 
 model_list = [cnn, super_cnn]
 x_axis = [i/20 for i in range(30)]

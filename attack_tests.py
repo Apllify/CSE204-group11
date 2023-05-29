@@ -66,24 +66,24 @@ def run_attacks(database_x, database_y, model_list, attack_func, attack_argument
     return accs
 
 
-def attack_lattice(model_class, train_database, test_database, attack_func, attack_range):
+def attack_lattice(model_class, train_database, test_database, attack_test, attack_train, range_test, range_train):
     '''
     Computes the lattice graph for the attack. 
     attack_func should be one of the <attack>_database functions, it is passed
     the elements of attack_range as argument for the attack intensity.
     '''
     
-    lattice = np.zeros(shape=(len(attack_range),len(attack_range)))
+    lattice = np.zeros(shape=(len(range_train),len(range_test)))
     
-    for i, x_I in np.ndenumerate(attack_range):
-        new_train_dat = attack_func(train_database[0], 0, x_I)
+    for i, x_I in np.ndenumerate(range_train):
+        new_train_dat = attack_train(train_database[0], 0, x_I)
         model = model_class()
         model.fit(new_train_dat, train_database[1])
-        for j, y_I in np.ndenumerate(attack_range):
-            new_test_dat = attack_func(test_database[0], 0, y_I)
+        for j, y_I in np.ndenumerate(range_test):
+            new_test_dat = attack_test(test_database[0], 0, y_I)
             lattice[i][j] = model.evaluate(new_test_dat, test_database[1])[1]
             
-    return lattice
+    return lattice.T
     
 
 
