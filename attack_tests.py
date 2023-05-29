@@ -66,6 +66,26 @@ def run_attacks(database_x, database_y, model_list, attack_func, attack_argument
     return accs
 
 
+def attack_lattice(model, train_database, test_database, attack_func, attack_range):
+    '''
+    Computes the lattice graph for the attack. 
+    attack_func should be one of the <attack>_database functions, it is passed
+    the elements of attack_range as argument for the attack intensity.
+    '''
+    
+    lattice = np.zeros(shape=(len(attack_range),len(attack_range)))
+    
+    for x_I in attack_range:
+        for y_I in attack_range:
+            new_train_dat = attack_func(train_database[0], 0, x_I)
+            new_test_dat = attack_func(test_database[0], 0, y_I)
+            model.fit(new_train_dat, train_database[1])
+            lattice[i][j] = model.evaluate(new_test_dat, test_database[1])
+            
+    return lattice
+    
+
+
 
 def generate_spoofed_dataset(database_x, database_y):
     """
