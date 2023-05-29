@@ -32,14 +32,21 @@ def rotate_database(images, min_rot, max_rot):
     """
     Returns a new database that maches the rotation requirements
 
-    min_rot, max_rot : rotation angles in degree, can be negative, must be integers
+    min_rot, max_rot : absolute value range of rotation angless in degree, must be integers, must be positive
     """
 
     new_images = np.zeros_like(images)
+    
+    mini = abs(min_rot)
+    maxi = abs(max_rot)
 
 
     for i in range(images.shape[0]):
-        rot = random.randint(min_rot, max_rot)
+        
+        rot = random.randint(mini, maxi)
+        sign = (random.randint(0, 1) * 2) - 1
+        rot *= sign
+        
         new_images[i] = rotate_image(images[i], rot)
 
     return new_images
