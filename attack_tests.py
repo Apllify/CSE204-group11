@@ -1,8 +1,11 @@
 import numpy as np
 import random
 import warnings
+from models import *
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
 
 from img_manipulations import *
+
 
 warnings.filterwarnings('ignore')
 
@@ -85,6 +88,7 @@ def attack_lattice(model_class, train_database, test_database, attack_test, atta
             
     return lattice.T
 
+
 def compute_average_confidence_over_right_answers(model, x, y):
     """computes the average confidence over images that were classified accurately. 
     y MUST NOT be one hot encoded"""
@@ -109,7 +113,7 @@ def compute_average_confidence_over_wrong_answers(model, x, y):
             total_confidence += np.maximum(y_pred[i])
     return total_confidence / incorrect_count
 
-def compute_average_confidence_over_true_right_answer(model, x, y):
+def compute_average_confidence_over_true_answer(model, x, y):
     """computes average confidence in the right answer regardless of prediction.
     y MUST NOT be one hot encoded"""
     y_pred = model.predict(x)
@@ -118,6 +122,41 @@ def compute_average_confidence_over_true_right_answer(model, x, y):
     for i in range(y.shape[0]):
         total_confidence += y_pred[i][y[i]]
     return total_confidence / y.shape[0]
+
+
+
+def fgsm_database_cnn(cnn, images, labels, max_epsilon, fixed_eps = False):
+    """FGSM generated images with random epsilons in [0, max_epsilon). TO BE USED
+    BY CNN ONLY for now"""
+    if not fixed_eps:
+        new_images = np.zeros_like(images)
+        for i in range(images.shape[0]):
+            eps = max_epsilon * random.random()
+            new_images[i] = fast_gradient_method(cnn, images[i].reshape(-1, 28, 28, 1), eps, 
+                                    np.inf, y=np.array([labels[i]]).astype(int)).numpy().reshape(28, 28)
+    
+        
+        return new_images
+    return fast_gradient_method(cnn, images.reshape(-1, 28, 28, 1), max_epsilon, 
+                            np.inf, y=labels.astype(int)).numpy()
+
+def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
+    """train_database and test_database are 3-tuples of (x, y, y_cat)"""
+    lattice = np.zeros(shape=(len(range_eps),len(range_eps)))
+    cnn = CNN_model()
+    cnn.load_weights("cnn_weights_3_epochs")
+    for i, x_I in np.ndenumerate(range_eps):
+        new_train_dat = fgsm_database_cnn(cnn, train_database[0], train_database[1], x_I)
+        model = CNN_model()
+        model.fit(new_train_dat, train_database[2])
+        for j, y_I in np.ndenumerate(range_eps):
+            new_test_dat = fgsm_database_cnn(model, test_database[0], test_database[1], y_I)
+            lattice[i][j] = model.evaluate(new_test_dat, test_database[2])[1]
+            
+    return lattice.T
+
+
+    
 
 def generate_spoofed_dataset(database_x, database_y):
     """
@@ -207,4 +246,5 @@ def generate_spoofed_dataset(database_x, database_y):
                 spoofed_dataset[i] = flip_image(image)
 
     return spoofed_dataset
+
 

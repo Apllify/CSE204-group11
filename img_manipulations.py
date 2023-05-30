@@ -77,6 +77,10 @@ def uniform_noise(img, max_noise):
     noise = (np.random.rand(*img.shape) - 0.5) * 2 * max_noise
     return img + noise
 
+def constant_noise(img, eps):
+    noise = eps*np.random.randint(-1, 2, img.shape)
+    return img + noise
+
 
 def perlin_noise(img, max_noise):
     """

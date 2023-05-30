@@ -5,6 +5,7 @@ import random
 
 #local imports
 from img_manipulations import *
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
  
 
 def prep_rotations(x, y):
@@ -108,7 +109,14 @@ def perlin_noise_database(images, min_noise, max_noise):
         new_images[i] = perlin_noise(images[i], max_noise)
         
     return new_images
-    
+
+def constant_noise_database(images, eps):
+    new_images = np.zeros_like(images)
+            
+    for i in range(images.shape[0]):
+        new_images[i] = constant_noise(images[i], eps)
+                
+    return new_images
 
 
 def flip_database(images, flip=True):
@@ -124,8 +132,6 @@ def flip_database(images, flip=True):
         return new_images
     else:
         return images
-    
-    
-    
-    
+
+
     
