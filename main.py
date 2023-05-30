@@ -57,29 +57,29 @@ cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
 
-fig, ax = plt.subplots(5, 6)
-eps = np.linspace(0, 0.5, 6)
-for i in range(5):
-    for j in range(6):
-        img = constant_noise(x_test[i], eps[j]) 
-        ax[i][j].imshow(img)
-        ax[i][j].axis('off')
+# fig, ax = plt.subplots(5, 6)
+# eps = np.linspace(0, 0.5, 6)
+# for i in range(5):
+#     for j in range(6):
+#         img = constant_noise(x_test[i], eps[j]) 
+#         ax[i][j].imshow(img)
+#         ax[i][j].axis('off')
 
-fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
+# fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
 
-cnn = CNN_model()
-cnn.load_weights("cnn_weights")
+# cnn = CNN_model()
+# cnn.load_weights("cnn_weights")
 
-fig, ax = plt.subplots(5, 6)
-eps = np.linspace(0, 0.5, 6)
-for i in range(5):
-    for j in range(6):
-        img = fgsm_x = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
-                                            np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
-        ax[i][j].imshow(img)
-        ax[i][j].axis('off')
+# fig, ax = plt.subplots(5, 6)
+# eps = np.linspace(0, 0.5, 6)
+# for i in range(5):
+#     for j in range(6):
+#         img = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
+#                                             np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
+#         ax[i][j].imshow(img)
+#         ax[i][j].axis('off')
 
-fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
+# fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
 
 
 #training the supersoldier models
@@ -161,41 +161,40 @@ fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
 
 # plt.show()
 
-"""Some code to compare models with fgsm"""
 
 
-# pca_model = PCA_model.load("Pca_125_cmpts")
-# #pca_model.fit(x_train, y_train_cat)
 
-pca_model = PCA_model(125, 10)
-pca_model.fit(x_train, y_train_cat)
+# pca_model = PCA_model.load("pca125_weights")
+# # pca_model.fit(x_train, y_train_cat)
+# # pca_model.save("pca125_weights")
 
-dnn_model = PCA_model(784, 10, True, False)
-dnn_model.fit(x_train, y_train_cat)
+# dnn_model = PCA_model(784, 10, True, False)
+# dnn_model.fit(x_train, y_train_cat)
 
-cnn_model = CNN_model()
-cnn_model.load_weights("cnn_weights_3_epochs")
+# cnn_model = CNN_model()
+# # cnn_model.fit(x_train, y_train_cat)
+# cnn_model.load_weights("cnn_weights_3_epochs")
 
-epsilons = np.linspace(0, 0.5, 20)
-pca_accs = np.zeros(20)
-cnn_accs = np.zeros(20)
-dnn_accs = np.zeros(20)
+# epsilons = np.linspace(0, 0.5, 20)
+# pca_accs = np.zeros(20)
+# cnn_accs = np.zeros(20)
+# dnn_accs = np.zeros(20)
 
-for i, eps in np.ndenumerate(epsilons):
-    # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
-    fgsm_x = constant_noise_database(x_test)
-    pca_accs[i] = pca_model.evaluate(fgsm_x, y_test_cat)[1]
-    cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
-    dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
+# for i, eps in np.ndenumerate(epsilons):
+#     # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
+#     fgsm_x = constant_noise_database(x_test, eps)
+#     pca_accs[i] = pca_model.evaluate(fgsm_x, y_test_cat)[1]
+#     cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
+#     dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
     
-plt.plot(epsilons, pca_accs, label="PCA model accuracy")
-plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
-plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
-plt.legend()
-plt.xlabel("Perturbation (epsilon) of each pixel")
-plt.ylabel("Model accuracy")
-plt.title("Model accuracies on Images with Randomly Perturbed (by fixed epsilon) Pixels")
-plt.show()
+# plt.plot(epsilons, pca_accs, label="PCA model accuracy")
+# plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
+# plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
+# plt.legend()
+# plt.xlabel("Perturbation (epsilon) of each pixel")
+# plt.ylabel("Model accuracy")
+# plt.title("Model Accuracies on Images with Randomly Perturbed (fixed epsilon) Pixels")
+# plt.show()
 
 
 
@@ -269,5 +268,10 @@ plt.show()
 
 # cnn = CNN_model()
 # cnn.load_weights("cnn_weights")
-# fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
-# print(fgsm_x.shape)
+# images = fgsm_database_cnn(cnn, x_test[:5], y_test[:5], 0.1)
+
+# plt.imshow(images[3])
+# plt.show()
+
+lattice = attack_lattice_fgsm_cnn((x_train, y_train, y_train_cat), (x_test, y_test, y_test_cat), np.linspace(0, 0.5, 20))
+np.savetxt("FGSM_cnn_lattice.txt", lattice)

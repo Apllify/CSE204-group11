@@ -5,6 +5,7 @@ import random
 
 #local imports
 from img_manipulations import *
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
  
 
 def prep_rotations(x, y):
@@ -131,7 +132,6 @@ def flip_database(images, flip=True):
         return new_images
     else:
         return images
-    
-    
-    
+
+
     
