@@ -141,6 +141,7 @@ def fgsm_database_cnn(cnn, images, labels, max_epsilon, fixed_eps = False):
                             np.inf, y=labels.astype(int)).numpy()
 
 def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
+    """train_database and test_database are 3-tuples of (x, y, y_cat)"""
     lattice = np.zeros(shape=(len(range_eps),len(range_eps)))
     cnn = CNN_model()
     cnn.load_weights("cnn_weights_3_epochs")
@@ -153,6 +154,9 @@ def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
             lattice[i][j] = model.evaluate(new_test_dat, test_database[2])[1]
             
     return lattice.T
+
+
+    
 
 def generate_spoofed_dataset(database_x, database_y):
     """

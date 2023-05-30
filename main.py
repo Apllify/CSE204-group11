@@ -199,6 +199,7 @@ cnn_model.save_weights('cnn_weights')
 
 
 
+
 # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
 # print(fgsm_x.shape)
 
@@ -280,3 +281,23 @@ plt.xlabel("Training Data Max Epsilon")
 plt.ylabel("Testing Data Max Epsilon")
 plt.title("Accuracy of CNN model with FGSM generated Training and Test images")
 plt.show()
+
+# epsilons = np.linspace(0, 0.5, 20)
+# average_confidence_original = np.ones(20)
+# average_confidences_fgsm = np.zeros(20)
+# targets = np.random.randint(0, 10, y_test.shape[0])
+
+# average_confidence_original *= compute_average_confidence_over_true_answer(cnn, x_test, targets)
+# for i, eps in np.ndenumerate(epsilons):
+#     x_fgsm = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), eps, 
+#                                 np.inf, y=targets, targeted=True).numpy()
+#     average_confidences_fgsm[i] = compute_average_confidence_over_true_answer(cnn, x_fgsm, targets)
+    
+# np.savetxt("average_confs.txt", average_confidences_fgsm)
+# plt.plot(epsilons, average_confidences_fgsm, label="FGSM generated images")
+# plt.plot(epsilons, average_confidence_original, label="Original images")
+# plt.xlabel("Epsilon used to Perturbe each Pixel")
+# plt.ylabel("Average Confidence in Targets")
+# plt.title("Demonstration of Targeted FGSM")
+# plt.legend()
+# plt.show()
