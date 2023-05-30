@@ -95,39 +95,22 @@ cnn_model.save_weights('cnn_weights')
 
 #loading the models from memory
 
-cnn = CNN_model()
-cnn.load_weights("cnn_weights")
+# cnn = CNN_model()
+# cnn.load_weights("cnn_weights")
 
-super_cnn = CNN_model()
-super_cnn.load_weights("super_cnn_weights")
+# super_cnn = CNN_model()
 
+attack_test = gaussian_blur_database 
+attack_train = uniform_noise_database 
 
-# model_list = [pca_model, dnn_model, cnn_model]
+range_test = np.linspace(0, 2, 20)
+range_train = np.linspace(0, 0.3, 20)
 
-#BOILERPLATE code for generating and plotting the effect of an attack
-n_samples = 8
-attack_function = uniform_noise_database
+lattice_pca = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_test, attack_train, range_test, range_train)
 
-arguments = np.array(  [[i/10] for i in range(8)] )
-# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# arguments[:, 1] = arguments[:, 0]
+np.savetxt("lattice_pca_gauss_uniform.txt", lattice_pca)
 
-#x_axis = arguments[:, 0]
-x_axis = [i/10 for i in range(8)]
-
-model_list = [cnn, super_cnn]
-x_axis = [i/20 for i in range(30)]
-
-
-# result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
-
-
-plt.plot(x_axis, result[0], label="CNN Model")
-plt.plot(x_axis, result[1], label="Super CNN Model")
-plt.legend(loc="upper right")
-plt.xlabel("Noise in Test Database")
-plt.ylabel("Accuracy of models")
-
-
-
+plt.pcolormesh(lattice_pca)
+plt.title("lattice_pca_gauss_uniform")
 plt.show()
+
