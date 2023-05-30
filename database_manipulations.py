@@ -108,7 +108,14 @@ def perlin_noise_database(images, min_noise, max_noise):
         new_images[i] = perlin_noise(images[i], max_noise)
         
     return new_images
-    
+
+def constant_noise_database(images, eps):
+    new_images = np.zeros_like(images)
+            
+    for i in range(images.shape[0]):
+        new_images[i] = constant_noise(images[i], eps)
+                
+    return new_images
 
 
 def flip_database(images, flip=True):

@@ -11,8 +11,10 @@ from models import CNN_model, PCA_model
 from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
-
 from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
+
+
+
 
 #CONSTANTS
 MAX_BLUR = 2
@@ -55,6 +57,31 @@ cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
 
+fig, ax = plt.subplots(5, 6)
+eps = np.linspace(0, 0.5, 6)
+for i in range(5):
+    for j in range(6):
+        img = constant_noise(x_test[i], eps[j]) 
+        ax[i][j].imshow(img)
+        ax[i][j].axis('off')
+
+fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
+
+cnn = CNN_model()
+cnn.load_weights("cnn_weights")
+
+fig, ax = plt.subplots(5, 6)
+eps = np.linspace(0, 0.5, 6)
+for i in range(5):
+    for j in range(6):
+        img = fgsm_x = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
+                                            np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
+        ax[i][j].imshow(img)
+        ax[i][j].axis('off')
+
+fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
+
+
 #training the supersoldier models
 
 
@@ -96,6 +123,83 @@ cnn_model.save_weights('cnn_weights')
 
 
 #loading the models from memory
+
+# cnn = CNN_model()
+# cnn.load_weights("cnn_weights")
+
+# super_cnn = CNN_model()
+# super_cnn.load_weights("super_cnn_weights")
+
+
+# # model_list = [pca_model, dnn_model, cnn_model]
+
+# #BOILERPLATE code for generating and plotting the effect of an attack
+# n_samples = 8
+# attack_function = uniform_noise_database
+
+# arguments = np.array(  [[i/10] for i in range(8)] )
+# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# # arguments[:, 1] = arguments[:, 0]
+
+# #x_axis = arguments[:, 0]
+# x_axis = [i/10 for i in range(8)]
+
+# model_list = [cnn, super_cnn]
+# x_axis = [i/20 for i in range(30)]
+
+
+# # result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
+
+
+# plt.plot(x_axis, result[0], label="CNN Model")
+# plt.plot(x_axis, result[1], label="Super CNN Model")
+# plt.legend(loc="upper right")
+# plt.xlabel("Noise in Test Database")
+# plt.ylabel("Accuracy of models")
+
+
+
+# plt.show()
+
+"""Some code to compare models with fgsm
+
+
+pca_model = PCA_model.load("Pca_125_cmpts")
+#pca_model.fit(x_train, y_train_cat)
+
+dnn_model = PCA_model(784, 10, True, False)
+dnn_model.fit(x_train, y_train_cat)
+
+cnn_model = CNN_model()
+cnn_model.load_weights("cnn_weights_3_epochs")
+
+epsilons = np.linspace(0, 0.5, 20)
+pca_accs = np.zeros(20)
+cnn_accs = np.zeros(20)
+dnn_accs = np.zeros(20)
+
+for i, eps in np.ndenumerate(epsilons):
+    fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
+    pca_accs[i] = pca_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
+    cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
+    dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
+    
+plt.plot(epsilons, pca_accs, label="PCA model accuracy")
+plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
+plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
+plt.legend()
+plt.xlabel("Perturbation (epsilon) of each pixel")
+plt.ylabel("Model accuracy")
+plt.title("Model Accuracies on Adversarial Examples generated for CNN model")
+plt.show()
+
+
+
+
+# fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
+# print(fgsm_x.shape)
+"""
+
 
 
 # fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.07, np.inf).numpy()
