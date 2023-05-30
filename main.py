@@ -59,31 +59,6 @@ cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
 
-# fig, ax = plt.subplots(5, 6)
-# eps = np.linspace(0, 0.5, 6)
-# for i in range(5):
-#     for j in range(6):
-#         img = constant_noise(x_test[i], eps[j]) 
-#         ax[i][j].imshow(img)
-#         ax[i][j].axis('off')
-
-# fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
-
-# cnn = CNN_model()
-# cnn.load_weights("cnn_weights")
-
-# fig, ax = plt.subplots(5, 6)
-# eps = np.linspace(0, 0.5, 6)
-# for i in range(5):
-#     for j in range(6):
-#         img = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
-#                                             np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
-#         ax[i][j].imshow(img)
-#         ax[i][j].axis('off')
-
-# fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
-
-
 #training the supersoldier models
 
 
@@ -130,14 +105,14 @@ cnn_model.save_weights('cnn_weights')
 # cnn.load_weights("cnn_weights")
 
 # super_cnn = CNN_model()
-# super_cnn.load_weights("super_cnn_weights")
 
+attack_test = gaussian_blur_database 
+attack_train = uniform_noise_database 
 
-# # model_list = [pca_model, dnn_model, cnn_model]
+range_test = np.linspace(0, 2, 20)
+range_train = np.linspace(0, 0.3, 20)
 
-# #BOILERPLATE code for generating and plotting the effect of an attack
-# n_samples = 8
-# attack_function = uniform_noise_database
+lattice_pca = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_test, attack_train, range_test, range_train)
 
 # arguments = np.array(  [[i/10] for i in range(8)] )
 # # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
@@ -301,22 +276,3 @@ plt.show()
 # plt.title("Accuracy of CNN model with FGSM generated Training and Test images")
 # plt.show()
 
-# epsilons = np.linspace(0, 0.5, 20)
-# average_confidence_original = np.ones(20)
-# average_confidences_fgsm = np.zeros(20)
-# targets = np.random.randint(0, 10, y_test.shape[0])
-
-# average_confidence_original *= compute_average_confidence_over_true_answer(cnn, x_test, targets)
-# for i, eps in np.ndenumerate(epsilons):
-#     x_fgsm = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), eps, 
-#                                 np.inf, y=targets, targeted=True).numpy()
-#     average_confidences_fgsm[i] = compute_average_confidence_over_true_answer(cnn, x_fgsm, targets)
-    
-# np.savetxt("average_confs.txt", average_confidences_fgsm)
-# plt.plot(epsilons, average_confidences_fgsm, label="FGSM generated images")
-# plt.plot(epsilons, average_confidence_original, label="Original images")
-# plt.xlabel("Epsilon used to Perturbe each Pixel")
-# plt.ylabel("Average Confidence in Targets")
-# plt.title("Demonstration of Targeted FGSM")
-# plt.legend()
-# plt.show()
