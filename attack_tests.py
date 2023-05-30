@@ -113,8 +113,8 @@ def compute_average_confidence_over_wrong_answers(model, x, y):
             total_confidence += np.maximum(y_pred[i])
     return total_confidence / incorrect_count
 
-def compute_average_confidence_over_true_right_answer(model, x, y):
-    """computes average confidence in the right answer regardless of prediction.
+def compute_average_confidence_over_true_answer(model, x, y):
+    """computes average confidence in the true answer regardless of prediction.
     y MUST NOT be one hot encoded"""
     y_pred = model.predict(x)
     
@@ -125,7 +125,7 @@ def compute_average_confidence_over_true_right_answer(model, x, y):
 
 def fgsm_database_cnn(cnn, images, labels, max_epsilon):
     """FGSM generated images with random epsilons in [0, max_epsilon). TO BE USED
-    BY CNN ONLY for now"""
+    BY CNN ONLY for now. Lables SHOULD NOT be one hot encoded"""
     new_images = np.zeros_like(images)
     for i in range(images.shape[0]):
         eps = max_epsilon * random.random()
@@ -134,6 +134,7 @@ def fgsm_database_cnn(cnn, images, labels, max_epsilon):
     return new_images
 
 def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
+    """train_database and test_database are 3-tuples of (x, y, y_cat)"""
     lattice = np.zeros(shape=(len(range_eps),len(range_eps)))
     cnn = CNN_model()
     cnn.load_weights("cnn_weights_3_epochs")
