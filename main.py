@@ -266,12 +266,31 @@ cnn_model.save_weights('cnn_weights')
 # plt.title("Gaussian Blur against Rotation (CNN model)")
 # plt.show()
 
-# cnn = CNN_model()
-# cnn.load_weights("cnn_weights")
+cnn = CNN_model()
+cnn.load_weights("cnn_weights_3_epochs")
 # images = fgsm_database_cnn(cnn, x_test[:5], y_test[:5], 0.1)
 
 # plt.imshow(images[3])
 # plt.show()
 
-lattice = attack_lattice_fgsm_cnn((x_train, y_train, y_train_cat), (x_test, y_test, y_test_cat), np.linspace(0, 0.5, 20))
-np.savetxt("FGSM_cnn_lattice.txt", lattice)
+# lattice = attack_lattice_fgsm_cnn((x_train, y_train, y_train_cat), (x_test, y_test, y_test_cat), np.linspace(0, 0.5, 20))
+# np.savetxt("FGSM_cnn_lattice.txt", lattice)
+# epsilons = np.linspace(0, 0.5, 20)
+# average_confidence_original = np.ones(20)
+# average_confidences_fgsm = np.zeros(20)
+# targets = np.random.randint(0, 10, y_test.shape[0])
+
+# average_confidence_original *= compute_average_confidence_over_true_answer(cnn, x_test, targets)
+# for i, eps in np.ndenumerate(epsilons):
+#     x_fgsm = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), eps, 
+#                                 np.inf, y=targets, targeted=True).numpy()
+#     average_confidences_fgsm[i] = compute_average_confidence_over_true_answer(cnn, x_fgsm, targets)
+    
+# np.savetxt("average_confs.txt", average_confidences_fgsm)
+# plt.plot(epsilons, average_confidences_fgsm, label="FGSM generated images")
+# plt.plot(epsilons, average_confidence_original, label="Original images")
+# plt.xlabel("Epsilon used to Perturbe each Pixel")
+# plt.ylabel("Average Confidence in Targets")
+# plt.title("Demonstration of Targeted FGSM")
+# plt.legend()
+# plt.show()

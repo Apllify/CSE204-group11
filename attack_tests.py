@@ -148,6 +148,9 @@ def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
             
     return lattice.T
 
+
+    
+
 def generate_spoofed_dataset(database_x, database_y):
     """
     Generates a list of same length and labels as x but with random filter functions
