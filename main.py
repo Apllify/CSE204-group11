@@ -6,12 +6,14 @@ from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
 
+
 #local imports
 from models import CNN_model, PCA_model
 from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
+import tensorflow as tf
 
 
 
@@ -164,37 +166,54 @@ cnn_model.save_weights('cnn_weights')
 
 
 
-# pca_model = PCA_model.load("pca125_weights")
+pca_model = PCA_model.load("pca125_2")
 # # pca_model.fit(x_train, y_train_cat)
 # # pca_model.save("pca125_weights")
+# pca_model = PCA_model(125, 10)
+# pca_model.fit(x_train, y_train_cat)
+# pca_model.save("pca125_2")
+# pca_model2 = PCA_model.load("pca125_2")
+cnn_model = CNN_model()
+cnn_model.load_weights("cnn_weights_3_epochs")
+
+# # print(pca_model2(x_test))
+# print(tf.executing_eagerly())
+
 
 # dnn_model = PCA_model(784, 10, True, False)
 # dnn_model.fit(x_train, y_train_cat)
+# dnn_model.save("DNN_2")
+dnn_model = PCA_model.load("DNN_2")
+# img = fast_gradient_method(dnn_model, x_test[0].reshape(-1, 784), 0.1, 
+#                                              np.inf, y=np.array([y_test[0]]).astype(int)).numpy().reshape(28, 28)
+# plt.imshow(img)
+# plt.show()
+
 
 # cnn_model = CNN_model()
 # # cnn_model.fit(x_train, y_train_cat)
 # cnn_model.load_weights("cnn_weights_3_epochs")
 
-# epsilons = np.linspace(0, 0.5, 20)
-# pca_accs = np.zeros(20)
-# cnn_accs = np.zeros(20)
-# dnn_accs = np.zeros(20)
+epsilons = np.linspace(0, 0.5, 20)
+pca_accs = np.zeros(20)
+cnn_accs = np.zeros(20)
+dnn_accs = np.zeros(20)
 
-# for i, eps in np.ndenumerate(epsilons):
-#     # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
-#     fgsm_x = constant_noise_database(x_test, eps)
-#     pca_accs[i] = pca_model.evaluate(fgsm_x, y_test_cat)[1]
-#     cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
-#     dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
+for i, eps in np.ndenumerate(epsilons):
+    fgsm_x = fast_gradient_method(dnn_model, x_test.reshape(-1, 784), eps, np.inf, y=y_test.astype(int)).numpy()
+    # fgsm_x = constant_noise_database(x_test, eps)
+    pca_accs[i] = pca_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
+    cnn_accs[i] = cnn_model.evaluate(fgsm_x.reshape(-1, 28, 28, 1), y_test_cat)[1]
+    dnn_accs[i] = dnn_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
     
-# plt.plot(epsilons, pca_accs, label="PCA model accuracy")
-# plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
-# plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
-# plt.legend()
-# plt.xlabel("Perturbation (epsilon) of each pixel")
-# plt.ylabel("Model accuracy")
-# plt.title("Model Accuracies on Images with Randomly Perturbed (fixed epsilon) Pixels")
-# plt.show()
+plt.plot(epsilons, pca_accs, label="PCA model accuracy")
+plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
+plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
+plt.legend()
+plt.xlabel("Perturbation (epsilon) of each pixel")
+plt.ylabel("Model accuracy")
+plt.title("Model Accuracies on Adversarial Examples generated for DNN model")
+plt.show()
 
 
 
@@ -275,12 +294,12 @@ cnn_model.save_weights('cnn_weights')
 
 # lattice = attack_lattice_fgsm_cnn((x_train[:30000], y_train[:30000], y_train_cat[:30000]), (x_test[:5000], y_test[:5000], y_test_cat[:5000]), np.linspace(0, 0.5, 10))
 # np.savetxt("FGSM_cnn_lattice_2.txt", lattice)
-lattice = np.loadtxt("FGSM_cnn_lattice_2.txt")
-plt.pcolormesh(np.linspace(0, 0.5, 10), np.linspace(0, 0.5, 10), lattice, cmap="RdBu")
-plt.xlabel("Training Data Max Epsilon")
-plt.ylabel("Testing Data Max Epsilon")
-plt.title("Accuracy of CNN model with FGSM generated Training and Test images")
-plt.show()
+# lattice = np.loadtxt("FGSM_cnn_lattice_2.txt")
+# plt.pcolormesh(np.linspace(0, 0.5, 10), np.linspace(0, 0.5, 10), lattice, cmap="RdBu")
+# plt.xlabel("Training Data Max Epsilon")
+# plt.ylabel("Testing Data Max Epsilon")
+# plt.title("Accuracy of CNN model with FGSM generated Training and Test images")
+# plt.show()
 
 # epsilons = np.linspace(0, 0.5, 20)
 # average_confidence_original = np.ones(20)

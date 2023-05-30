@@ -6,6 +6,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, Input, BatchNormalization
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras import models
+from tensorflow.python.framework.ops import enable_eager_execution
 
 
 import tensorflow.keras.datasets.mnist as mnist
@@ -100,7 +101,6 @@ class PCA_model(object):
             sgd = SGD(learning_rate=0.1)
             self.model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
         
-        
     def flatten_each_element(array):
         """
         Makes is so that every element of main array is a 1d array
@@ -110,8 +110,15 @@ class PCA_model(object):
             return array
 
         flat_array = array[:]
-        flat_array = flat_array.reshape(
-            flat_array.shape[0], np.prod(flat_array.shape[1:]))
+        try:
+            flat_array = flat_array.reshape(
+                flat_array.shape[0], np.prod(flat_array.shape[1:]))
+        except AttributeError:
+            # enable_eager_execution()
+            # print(tf.executing_eagerly())
+            # flat_array = flat_array.numpy().reshape(flat_array.shape[0], np.prod(flat_array.shape[1:]))
+            # flat_array = tf.convert_to_tensor(flat_array, float)
+            tf.reshape(flat_array, (flat_array.shape[0], np.prod(flat_array.shape[1:])))
 
         return flat_array
 
@@ -146,7 +153,11 @@ class PCA_model(object):
 
         return pca
 
-        
+    def __call__(self, x):
+        """only in DNN mode"""
+        if self.perform_PCA:
+            raise Exception("Don't call in PCA mode")
+        return self.model(x)
 
     def fit(self, x, y):
         """
