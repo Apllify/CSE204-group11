@@ -1,6 +1,8 @@
 import numpy as np
 import random
 import warnings
+from models import *
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
 
 from img_manipulations import *
 
@@ -121,6 +123,30 @@ def compute_average_confidence_over_true_right_answer(model, x, y):
         total_confidence += y_pred[i][y[i]]
     return total_confidence / y.shape[0]
 
+def fgsm_database_cnn(cnn, images, labels, max_epsilon):
+    """FGSM generated images with random epsilons in [0, max_epsilon). TO BE USED
+    BY CNN ONLY for now"""
+    new_images = np.zeros_like(images)
+    for i in range(images.shape[0]):
+        eps = max_epsilon * random.random()
+        new_images[i] = fast_gradient_method(cnn, images[i].reshape(-1, 28, 28, 1), eps, 
+                                np.inf, y=np.array([labels[i]]).astype(int)).numpy().reshape(28, 28)
+    return new_images
+
+def attack_lattice_fgsm_cnn(train_database, test_database, range_eps):
+    lattice = np.zeros(shape=(len(range_eps),len(range_eps)))
+    cnn = CNN_model()
+    cnn.load_weights("cnn_weights_3_epochs")
+    for i, x_I in np.ndenumerate(range_eps):
+        new_train_dat = fgsm_database_cnn(cnn, train_database[0], train_database[1], x_I)
+        model = CNN_model()
+        model.fit(new_train_dat, train_database[2])
+        for j, y_I in np.ndenumerate(range_eps):
+            new_test_dat = fgsm_database_cnn(cnn, test_database[0], test_database[1], y_I)
+            lattice[i][j] = model.evaluate(new_test_dat, test_database[2])[1]
+            
+    return lattice.T
+
 def generate_spoofed_dataset(database_x, database_y):
     """
     Generates a list of same length and labels as x but with random filter functions
@@ -209,4 +235,5 @@ def generate_spoofed_dataset(database_x, database_y):
                 spoofed_dataset[i] = flip_image(image)
 
     return spoofed_dataset
+
 
