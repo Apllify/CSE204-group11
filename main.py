@@ -161,11 +161,14 @@ fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
 
 # plt.show()
 
-"""Some code to compare models with fgsm
+"""Some code to compare models with fgsm"""
 
 
-pca_model = PCA_model.load("Pca_125_cmpts")
-#pca_model.fit(x_train, y_train_cat)
+# pca_model = PCA_model.load("Pca_125_cmpts")
+# #pca_model.fit(x_train, y_train_cat)
+
+pca_model = PCA_model(125, 10)
+pca_model.fit(x_train, y_train_cat)
 
 dnn_model = PCA_model(784, 10, True, False)
 dnn_model.fit(x_train, y_train_cat)
@@ -179,8 +182,9 @@ cnn_accs = np.zeros(20)
 dnn_accs = np.zeros(20)
 
 for i, eps in np.ndenumerate(epsilons):
-    fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
-    pca_accs[i] = pca_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
+    # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
+    fgsm_x = constant_noise_database(x_test)
+    pca_accs[i] = pca_model.evaluate(fgsm_x, y_test_cat)[1]
     cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
     dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
     
@@ -190,15 +194,16 @@ plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
 plt.legend()
 plt.xlabel("Perturbation (epsilon) of each pixel")
 plt.ylabel("Model accuracy")
-plt.title("Model Accuracies on Adversarial Examples generated for CNN model")
+plt.title("Model accuracies on Images with Randomly Perturbed (by fixed epsilon) Pixels")
 plt.show()
+
 
 
 
 
 # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
 # print(fgsm_x.shape)
-"""
+
 
 
 
@@ -262,7 +267,7 @@ plt.show()
 # plt.title("Gaussian Blur against Rotation (CNN model)")
 # plt.show()
 
-cnn = CNN_model()
-cnn.load_weights("cnn_weights")
-fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
-print(fgsm_x.shape)
+# cnn = CNN_model()
+# cnn.load_weights("cnn_weights")
+# fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
+# print(fgsm_x.shape)
