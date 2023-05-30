@@ -11,6 +11,8 @@ from models import CNN_model, PCA_model
 from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
+
 
 #CONSTANTS
 MAX_BLUR = 2
@@ -52,6 +54,31 @@ dnn_model.save("dnn_weights")
 cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
+
+fig, ax = plt.subplots(5, 6)
+eps = np.linspace(0, 0.5, 6)
+for i in range(5):
+    for j in range(6):
+        img = constant_noise(x_test[i], eps[j]) 
+        ax[i][j].imshow(img)
+        ax[i][j].axis('off')
+
+fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
+
+cnn = CNN_model()
+cnn.load_weights("cnn_weights")
+
+fig, ax = plt.subplots(5, 6)
+eps = np.linspace(0, 0.5, 6)
+for i in range(5):
+    for j in range(6):
+        img = fgsm_x = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
+                                            np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
+        ax[i][j].imshow(img)
+        ax[i][j].axis('off')
+
+fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
+
 
 #training the supersoldier models
 
