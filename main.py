@@ -12,6 +12,8 @@ from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 
+from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
+
 #CONSTANTS
 MAX_BLUR = 2
 
@@ -95,39 +97,68 @@ cnn_model.save_weights('cnn_weights')
 
 #loading the models from memory
 
+
+# fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.07, np.inf).numpy()
+# print(cnn.evaluate(fgsm_x, y_test_cat))
+
+# fig, ax = plt.subplots(5, 5)
+# eps = np.linspace(0, 0.5, 25)
+
+# for i in range(5):
+#     for j in range(5):
+#         fgsm_x = fast_gradient_method(cnn, x_test[0].reshape(-1, 28, 28, 1), eps[i * 5 + j], np.inf, y=np.array([y_test[0]]).astype(int)).numpy().reshape(28, 28)
+#         ax[i][j].imshow(fgsm_x)
+#         ax[i][j].axis('off')
+
+# plt.show()
+
+
+
+# print(cnn.evaluate(x_test, y_test_cat))
+# super_cnn = CNN_model()
+# super_cnn.load_weights("super_cnn_weights")
+
+
+# # model_list = [pca_model, dnn_model, cnn_model]
+
+# #BOILERPLATE code for generating and plotting the effect of an attack
+# n_samples = 8
+# attack_function = uniform_noise_database
+
+# arguments = np.array(  [[i/10] for i in range(8)] )
+# # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
+# # arguments[:, 1] = arguments[:, 0]
+
+# #x_axis = arguments[:, 0]
+# x_axis = [i/10 for i in range(8)]
+
+# model_list = [cnn, super_cnn]
+# x_axis = [i/20 for i in range(30)]
+
+
+# # result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
+
+
+# plt.plot(x_axis, result[0], label="CNN Model")
+# plt.plot(x_axis, result[1], label="Super CNN Model")
+# plt.legend(loc="upper right")
+# plt.xlabel("Noise in Test Database")
+# plt.ylabel("Accuracy of models")
+
+
+
+# plt.show()
+# lattice = attack_lattice(CNN_model, (rx_train, ry_train_cat), (rx_test, ry_test_cat), 
+#                          gaussian_blur_database, rotate_database, np.arange(0, 2, 0.1), np.arange(0, 180, 10))
+# np.savetxt("cnn_gaussian_against_rotation.txt", lattice)
+# lattice = np.loadtxt("cnn_gaussian_against_rotation.txt")
+# plt.pcolormesh(np.arange(0, 180, 10), np.arange(0, 2, 0.1), lattice, cmap="RdBu")
+# plt.xlabel("Training Data Max Rotation Angle")
+# plt.ylabel("Testing Data Max Blur Level")
+# plt.title("Gaussian Blur against Rotation (CNN model)")
+# plt.show()
+
 cnn = CNN_model()
 cnn.load_weights("cnn_weights")
-
-super_cnn = CNN_model()
-super_cnn.load_weights("super_cnn_weights")
-
-
-# model_list = [pca_model, dnn_model, cnn_model]
-
-#BOILERPLATE code for generating and plotting the effect of an attack
-n_samples = 8
-attack_function = uniform_noise_database
-
-arguments = np.array(  [[i/10] for i in range(8)] )
-# arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
-# arguments[:, 1] = arguments[:, 0]
-
-#x_axis = arguments[:, 0]
-x_axis = [i/10 for i in range(8)]
-
-model_list = [cnn, super_cnn]
-x_axis = [i/20 for i in range(30)]
-
-
-# result = run_attacks(x_test, y_test_cat, model_list, attack_function, arguments)
-
-
-plt.plot(x_axis, result[0], label="CNN Model")
-plt.plot(x_axis, result[1], label="Super CNN Model")
-plt.legend(loc="upper right")
-plt.xlabel("Noise in Test Database")
-plt.ylabel("Accuracy of models")
-
-
-
-plt.show()
+fgsm_x = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), 0.1, np.inf, y=y_test.astype(int)).numpy()
+print(fgsm_x.shape)

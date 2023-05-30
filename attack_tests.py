@@ -4,6 +4,7 @@ import warnings
 
 from img_manipulations import *
 
+
 warnings.filterwarnings('ignore')
 
 
@@ -84,6 +85,7 @@ def attack_lattice(model_class, train_database, test_database, attack_test, atta
             lattice[i][j] = model.evaluate(new_test_dat, test_database[1])[1]
             
     return lattice.T
+
 
 def compute_average_confidence_over_right_answers(model, x, y):
     """computes the average confidence over images that were classified accurately. 

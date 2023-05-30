@@ -128,4 +128,3 @@ def flip_database(images, flip=True):
     
     
     
-    
