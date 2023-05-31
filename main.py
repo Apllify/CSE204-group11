@@ -306,9 +306,38 @@ model = CNN_model()
 model.load_weights("cnn_weights_3_epochs")
 
 range_ = np.arange(0, 180, 10)
-confs = run_confidence_tests(model, (rx_test, ry_test), rotate_database, 
+confs_wrong = run_confidence_tests(model, (rx_test, ry_test), rotate_database, 
                      compute_average_confidence_over_wrong_answers, range_)
 
-plt.plot(range_, confs)
+confs_correct = run_confidence_tests(model, (rx_test, ry_test), rotate_database, 
+                     compute_average_confidence_over_right_answers, range_)
+
+confs_true = run_confidence_tests(model, (rx_test, ry_test), rotate_database, 
+                     compute_average_confidence_over_true_answers, range_)
+
+
+## wrong
+plt.plot(range_, confs_wrong)
+
+plt.title("Average confidence of wrong predictions")
+plt.xlabel("Degrees of rotation")
+
 plt.show()
+
+## correct
+plt.plot(range_, confs_correct)
+
+plt.title("Average confidence of right prediction")
+plt.xlabel("Degrees of rotation")
+
+plt.show()
+
+## true
+plt.plot(range_, confs_true)
+
+plt.title("Average confidence of the groud truth")
+plt.xlabel("Degrees of rotation")
+
+plt.show()
+
 
