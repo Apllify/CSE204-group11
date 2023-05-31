@@ -98,7 +98,7 @@ def compute_average_confidence_over_right_answers(model, x, y):
     for i in range(y.shape[0]):
         if np.argmax(y_pred[i]) == y[i]:
             correct_count += 1
-            total_confidence += np.maximum(y_pred[i])
+            total_confidence += np.max(y_pred[i])
     return total_confidence / correct_count
     
 def compute_average_confidence_over_wrong_answers(model, x, y):
@@ -110,10 +110,10 @@ def compute_average_confidence_over_wrong_answers(model, x, y):
     for i in range(y.shape[0]):
         if np.argmax(y_pred[i]) != y[i]:
             incorrect_count += 1
-            total_confidence += np.maximum(y_pred[i])
+            total_confidence += np.max(y_pred[i])
     return total_confidence / incorrect_count
 
-def compute_average_confidence_over_true_answer(model, x, y):
+def compute_average_confidence_over_true_answers(model, x, y):
     """computes average confidence in the right answer regardless of prediction.
     y MUST NOT be one hot encoded"""
     y_pred = model.predict(x)
@@ -123,6 +123,13 @@ def compute_average_confidence_over_true_answer(model, x, y):
         total_confidence += y_pred[i][y[i]]
     return total_confidence / y.shape[0]
 
+def run_confidence_tests(model, database, attack_func, confidence_func, range_):
+    confidences = np.zeros(range_.shape[0])
+    for i, intensity in np.ndenumerate(range_):
+        attacked = attack_func(database[0], 0, intensity)
+        confidences[i] = confidence_func(model, attacked, database[1])
+    return confidences
+        
 
 
 def fgsm_database_cnn(cnn, images, labels, max_epsilon, fixed_eps = False):

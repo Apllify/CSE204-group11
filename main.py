@@ -6,14 +6,12 @@ from tensorflow.keras import utils
 from tensorflow.keras import models
 import matplotlib.pyplot  as plt
 
-
 #local imports
 from models import CNN_model, PCA_model
 from attack_tests import *
 from img_manipulations import *
 from database_manipulations import *
 from cleverhans.tf2.attacks.fast_gradient_method import fast_gradient_method
-import tensorflow as tf
 
 
 
@@ -58,6 +56,31 @@ dnn_model.save("dnn_weights")
 cnn_model.fit(x_train.reshape(-1, 28, 28, 1), y_train_cat)
 cnn_model.save_weights('cnn_weights')
 """
+
+# fig, ax = plt.subplots(5, 6)
+# eps = np.linspace(0, 0.5, 6)
+# for i in range(5):
+#     for j in range(6):
+#         img = constant_noise(x_test[i], eps[j]) 
+#         ax[i][j].imshow(img)
+#         ax[i][j].axis('off')
+
+# fig.suptitle('Random constant noise of inf-norm in [0, 0.5]')
+
+# cnn = CNN_model()
+# cnn.load_weights("cnn_weights")
+
+# fig, ax = plt.subplots(5, 6)
+# eps = np.linspace(0, 0.5, 6)
+# for i in range(5):
+#     for j in range(6):
+#         img = fast_gradient_method(cnn, x_test[i].reshape(-1, 28, 28, 1), eps[j], 
+#                                             np.inf, y=np.array([y_test[i]]).astype(int)).numpy().reshape(28, 28)
+#         ax[i][j].imshow(img)
+#         ax[i][j].axis('off')
+
+# fig.suptitle('FGSM noise of inf-norm in [0, 0.5]')
+
 
 #training the supersoldier models
 
@@ -105,14 +128,14 @@ cnn_model.save_weights('cnn_weights')
 # cnn.load_weights("cnn_weights")
 
 # super_cnn = CNN_model()
+# super_cnn.load_weights("super_cnn_weights")
 
-attack_test = gaussian_blur_database 
-attack_train = uniform_noise_database 
 
-range_test = np.linspace(0, 2, 20)
-range_train = np.linspace(0, 0.3, 20)
+# # model_list = [pca_model, dnn_model, cnn_model]
 
-lattice_pca = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_cat), attack_test, attack_train, range_test, range_train)
+# #BOILERPLATE code for generating and plotting the effect of an attack
+# n_samples = 8
+# attack_function = uniform_noise_database
 
 # arguments = np.array(  [[i/10] for i in range(8)] )
 # # arguments[:, 0] = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5]
@@ -141,54 +164,37 @@ lattice_pca = attack_lattice(PCA_model, (x_train, y_train_cat), (x_test, y_test_
 
 
 
-pca_model = PCA_model.load("pca125_2")
+# pca_model = PCA_model.load("pca125_weights")
 # # pca_model.fit(x_train, y_train_cat)
 # # pca_model.save("pca125_weights")
-# pca_model = PCA_model(125, 10)
-# pca_model.fit(x_train, y_train_cat)
-# pca_model.save("pca125_2")
-# pca_model2 = PCA_model.load("pca125_2")
-cnn_model = CNN_model()
-cnn_model.load_weights("cnn_weights_3_epochs")
-
-# # print(pca_model2(x_test))
-# print(tf.executing_eagerly())
-
 
 # dnn_model = PCA_model(784, 10, True, False)
 # dnn_model.fit(x_train, y_train_cat)
-# dnn_model.save("DNN_2")
-dnn_model = PCA_model.load("DNN_2")
-# img = fast_gradient_method(dnn_model, x_test[0].reshape(-1, 784), 0.1, 
-#                                              np.inf, y=np.array([y_test[0]]).astype(int)).numpy().reshape(28, 28)
-# plt.imshow(img)
-# plt.show()
-
 
 # cnn_model = CNN_model()
 # # cnn_model.fit(x_train, y_train_cat)
 # cnn_model.load_weights("cnn_weights_3_epochs")
 
-epsilons = np.linspace(0, 0.5, 20)
-pca_accs = np.zeros(20)
-cnn_accs = np.zeros(20)
-dnn_accs = np.zeros(20)
+# epsilons = np.linspace(0, 0.5, 20)
+# pca_accs = np.zeros(20)
+# cnn_accs = np.zeros(20)
+# dnn_accs = np.zeros(20)
 
-for i, eps in np.ndenumerate(epsilons):
-    fgsm_x = fast_gradient_method(dnn_model, x_test.reshape(-1, 784), eps, np.inf, y=y_test.astype(int)).numpy()
-    # fgsm_x = constant_noise_database(x_test, eps)
-    pca_accs[i] = pca_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
-    cnn_accs[i] = cnn_model.evaluate(fgsm_x.reshape(-1, 28, 28, 1), y_test_cat)[1]
-    dnn_accs[i] = dnn_model.evaluate(fgsm_x.reshape(-1, 28, 28), y_test_cat)[1]
+# for i, eps in np.ndenumerate(epsilons):
+#     # fgsm_x = fast_gradient_method(cnn_model, x_test.reshape(-1, 28, 28, 1), eps, np.inf, y=y_test.astype(int)).numpy()
+#     fgsm_x = constant_noise_database(x_test, eps)
+#     pca_accs[i] = pca_model.evaluate(fgsm_x, y_test_cat)[1]
+#     cnn_accs[i] = cnn_model.evaluate(fgsm_x, y_test_cat)[1]
+#     dnn_accs[i] = dnn_model.evaluate(fgsm_x, y_test_cat)[1]
     
-plt.plot(epsilons, pca_accs, label="PCA model accuracy")
-plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
-plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
-plt.legend()
-plt.xlabel("Perturbation (epsilon) of each pixel")
-plt.ylabel("Model accuracy")
-plt.title("Model Accuracies on Adversarial Examples generated for DNN model")
-plt.show()
+# plt.plot(epsilons, pca_accs, label="PCA model accuracy")
+# plt.plot(epsilons, cnn_accs, label="CNN model accuracy")
+# plt.plot(epsilons, dnn_accs, label="DNN model accuracy")
+# plt.legend()
+# plt.xlabel("Perturbation (epsilon) of each pixel")
+# plt.ylabel("Model accuracy")
+# plt.title("Model Accuracies on Images with Randomly Perturbed (fixed epsilon) Pixels")
+# plt.show()
 
 
 
@@ -275,4 +281,34 @@ plt.show()
 # plt.ylabel("Testing Data Max Epsilon")
 # plt.title("Accuracy of CNN model with FGSM generated Training and Test images")
 # plt.show()
+
+# epsilons = np.linspace(0, 0.5, 20)
+# average_confidence_original = np.ones(20)
+# average_confidences_fgsm = np.zeros(20)
+# targets = np.random.randint(0, 10, y_test.shape[0])
+
+# average_confidence_original *= compute_average_confidence_over_true_answer(cnn, x_test, targets)
+# for i, eps in np.ndenumerate(epsilons):
+#     x_fgsm = fast_gradient_method(cnn, x_test.reshape(-1, 28, 28, 1), eps, 
+#                                 np.inf, y=targets, targeted=True).numpy()
+#     average_confidences_fgsm[i] = compute_average_confidence_over_true_answer(cnn, x_fgsm, targets)
+    
+# np.savetxt("average_confs.txt", average_confidences_fgsm)
+# plt.plot(epsilons, average_confidences_fgsm, label="FGSM generated images")
+# plt.plot(epsilons, average_confidence_original, label="Original images")
+# plt.xlabel("Epsilon used to Perturbe each Pixel")
+# plt.ylabel("Average Confidence in Targets")
+# plt.title("Demonstration of Targeted FGSM")
+# plt.legend()
+# plt.show()
+
+model = CNN_model()
+model.load_weights("cnn_weights_3_epochs")
+
+range_ = np.arange(0, 180, 10)
+confs = run_confidence_tests(model, (rx_test, ry_test), rotate_database, 
+                     compute_average_confidence_over_wrong_answers, range_)
+
+plt.plot(range_, confs)
+plt.show()
 
